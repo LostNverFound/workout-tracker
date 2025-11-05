@@ -1,107 +1,129 @@
 import React, { useState } from 'react';
-import { Dumbbell, TrendingUp, Library, Calendar, Plus, Check, RefreshCw, Zap, MessageSquare, X, CalendarDays } from 'lucide-react';
+import { Dumbbell, TrendingUp, Library, Calendar, Plus, Check, RefreshCw, Zap, MessageSquare, X, CalendarDays, RotateCcw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const EXERCISE_LIBRARY = {
   chest: [
     { id: 1, name: 'Barbell Bench Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Triceps, Shoulders', description: 'The king of chest exercises.' },
-    { id: 2, name: 'Dumbbell Bench Press', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Triceps, Shoulders', description: 'Greater range of motion.' },
+    { id: 2, name: 'Dumbbell Bench Press', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Chest', secondary: 'Triceps, Shoulders', description: 'Great for stability.' },
     { id: 3, name: 'Incline Barbell Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Upper Chest', secondary: 'Shoulders, Triceps', description: 'Targets upper pectorals.' },
-    { id: 4, name: 'Incline Dumbbell Press', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Upper Chest', secondary: 'Shoulders, Triceps', description: 'Upper chest focus.' },
-    { id: 5, name: 'Decline Bench Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Lower Chest', secondary: 'Triceps', description: 'Lower chest emphasis.' },
+    { id: 4, name: 'Incline Dumbbell Press', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Upper Chest', secondary: 'Shoulders, Triceps', description: 'Upper chest with dumbbells.' },
+    { id: 5, name: 'Decline Bench Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Lower Chest', secondary: 'Triceps', description: 'Lower chest focus.' },
     { id: 6, name: 'Dumbbell Flyes', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Chest', secondary: 'None', description: 'Chest isolation exercise.' },
     { id: 7, name: 'Cable Flyes', equipment: 'Cable', difficulty: 'Beginner', primary: 'Chest', secondary: 'None', description: 'Constant tension flyes.' },
-    { id: 8, name: 'Push-ups', equipment: 'Bodyweight', difficulty: 'Beginner', primary: 'Chest', secondary: 'Triceps, Core', description: 'Classic bodyweight.' },
-    { id: 9, name: 'Chest Dips', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Lower Chest', secondary: 'Triceps', description: 'Lower chest mass.' },
+    { id: 8, name: 'Push-ups', equipment: 'Bodyweight', difficulty: 'Beginner', primary: 'Chest', secondary: 'Triceps, Shoulders', description: 'Classic bodyweight chest.' },
+    { id: 9, name: 'Dips', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Triceps', description: 'Lower chest builder.' },
     { id: 10, name: 'Pec Deck Machine', equipment: 'Machine', difficulty: 'Beginner', primary: 'Chest', secondary: 'None', description: 'Chest isolation.' },
-    { id: 101, name: 'Low Cable Flyes', equipment: 'Cable', difficulty: 'Beginner', primary: 'Upper Chest', secondary: 'None', description: 'Upper chest cable work.' },
-    { id: 102, name: 'Landmine Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Shoulders, Core', description: 'Natural pressing arc.' },
-    { id: 201, name: 'Svend Press', equipment: 'Plate', difficulty: 'Beginner', primary: 'Inner Chest', secondary: 'None', description: 'Inner chest squeeze.' },
-    { id: 202, name: 'Floor Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Triceps', description: 'Lockout strength.' },
-    { id: 301, name: 'Smith Machine Bench', equipment: 'Machine', difficulty: 'Beginner', primary: 'Chest', secondary: 'Triceps', description: 'Controlled pressing.' },
-    { id: 302, name: 'Incline Cable Flyes', equipment: 'Cable', difficulty: 'Beginner', primary: 'Upper Chest', secondary: 'None', description: 'Upper chest stretch.' },
-    { id: 303, name: 'Decline Dumbbell Press', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Lower Chest', secondary: 'Triceps', description: 'Lower chest builder.' },
-    { id: 304, name: 'Wide Push-ups', equipment: 'Bodyweight', difficulty: 'Beginner', primary: 'Chest', secondary: 'Shoulders', description: 'Chest-focused pushup.' },
-    { id: 305, name: 'Plate Press', equipment: 'Plate', difficulty: 'Beginner', primary: 'Chest', secondary: 'Triceps', description: 'Plate squeeze press.' },
-    { id: 306, name: 'Dumbbell Pullover', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Lats', description: 'Chest expansion.' },
-    { id: 307, name: 'Deficit Push-ups', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Triceps', description: 'Increased ROM.' },
-    { id: 308, name: 'Machine Chest Press', equipment: 'Machine', difficulty: 'Beginner', primary: 'Chest', secondary: 'Triceps', description: 'Safe machine press.' },
+    { id: 301, name: 'Incline Cable Flyes', equipment: 'Cable', difficulty: 'Beginner', primary: 'Upper Chest', secondary: 'None', description: 'Upper chest isolation.' },
+    { id: 302, name: 'Decline Dumbbell Press', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Lower Chest', secondary: 'Triceps', description: 'Lower chest development.' },
+    { id: 303, name: 'Machine Chest Press', equipment: 'Machine', difficulty: 'Beginner', primary: 'Chest', secondary: 'Triceps', description: 'Controlled chest work.' },
+    { id: 304, name: 'Landmine Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Shoulders', description: 'Unique pressing angle.' },
+    { id: 305, name: 'Squeeze Press', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Chest', secondary: 'None', description: 'Inner chest focus.' },
+    { id: 306, name: 'Svend Press', equipment: 'Plate', difficulty: 'Beginner', primary: 'Chest', secondary: 'None', description: 'Plate squeeze press.' },
+    { id: 307, name: 'Deficit Push-ups', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Triceps', description: 'Increased ROM push-ups.' },
+    { id: 308, name: 'Decline Push-ups', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Upper Chest', secondary: 'Shoulders', description: 'Elevated feet push-ups.' },
+    { id: 309, name: 'Wide Grip Bench Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Shoulders', description: 'Outer chest emphasis.' },
+    { id: 310, name: 'Single Arm Cable Press', equipment: 'Cable', difficulty: 'Intermediate', primary: 'Chest', secondary: 'Core', description: 'Unilateral chest work.' },
   ],
   back: [
     { id: 11, name: 'Deadlift', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Back', secondary: 'Hamstrings, Glutes', description: 'Ultimate strength builder.' },
     { id: 12, name: 'Pull-ups', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Lats', secondary: 'Biceps', description: 'Back width builder.' },
     { id: 13, name: 'Bent-Over Barbell Row', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Back', secondary: 'Biceps', description: 'Back thickness builder.' },
-    { id: 14, name: 'Dumbbell Row', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Back', secondary: 'Biceps', description: 'Unilateral back work.' },
+    { id: 14, name: 'T-Bar Row', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Back', secondary: 'Biceps', description: 'Mid-back thickness.' },
     { id: 15, name: 'Lat Pulldown', equipment: 'Cable', difficulty: 'Beginner', primary: 'Lats', secondary: 'Biceps', description: 'Pull-up alternative.' },
     { id: 16, name: 'Seated Cable Row', equipment: 'Cable', difficulty: 'Beginner', primary: 'Back', secondary: 'Biceps', description: 'Mid-back developer.' },
-    { id: 17, name: 'T-Bar Row', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Back', secondary: 'Biceps', description: 'Heavy back row.' },
-    { id: 18, name: 'Face Pulls', equipment: 'Cable', difficulty: 'Beginner', primary: 'Rear Delts', secondary: 'Upper Back', description: 'Shoulder health.' },
-    { id: 19, name: 'Chin-ups', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Lats', secondary: 'Biceps', description: 'Bicep-focused pullup.' },
-    { id: 20, name: 'Hyperextensions', equipment: 'Machine', difficulty: 'Beginner', primary: 'Lower Back', secondary: 'Glutes', description: 'Lower back strength.' },
-    { id: 103, name: 'Pendlay Row', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Back', secondary: 'Biceps', description: 'Explosive row.' },
-    { id: 104, name: 'Chest Supported Row', equipment: 'Machine', difficulty: 'Beginner', primary: 'Back', secondary: 'Biceps', description: 'Strict form row.' },
-    { id: 105, name: 'Straight Arm Pulldown', equipment: 'Cable', difficulty: 'Beginner', primary: 'Lats', secondary: 'None', description: 'Lat isolation.' },
-    { id: 203, name: 'Meadows Row', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Back', secondary: 'Biceps', description: 'Landmine row.' },
-    { id: 204, name: 'Inverted Row', equipment: 'Bodyweight', difficulty: 'Beginner', primary: 'Back', secondary: 'Biceps', description: 'Horizontal pullup.' },
-    { id: 205, name: 'Rack Pulls', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Back', secondary: 'Traps', description: 'Partial deadlift.' },
-    { id: 309, name: 'Wide Grip Pulldown', equipment: 'Cable', difficulty: 'Beginner', primary: 'Lats', secondary: 'Biceps', description: 'Width emphasis.' },
-    { id: 310, name: 'Close Grip Pulldown', equipment: 'Cable', difficulty: 'Beginner', primary: 'Lats', secondary: 'Biceps', description: 'Thickness emphasis.' },
-    { id: 311, name: 'Reverse Grip Pulldown', equipment: 'Cable', difficulty: 'Beginner', primary: 'Lats', secondary: 'Biceps', description: 'Underhand pulldown.' },
-    { id: 312, name: 'Kroc Row', equipment: 'Dumbbell', difficulty: 'Advanced', primary: 'Back', secondary: 'Biceps', description: 'Heavy momentum row.' },
-    { id: 313, name: 'Seal Row', equipment: 'Bench', difficulty: 'Intermediate', primary: 'Back', secondary: 'Biceps', description: 'Strict chest support.' },
-    { id: 314, name: 'Cable Row High', equipment: 'Cable', difficulty: 'Beginner', primary: 'Upper Back', secondary: 'Rear Delts', description: 'Upper back focus.' },
-    { id: 315, name: 'Cable Row Low', equipment: 'Cable', difficulty: 'Beginner', primary: 'Lats', secondary: 'Biceps', description: 'Lower lat focus.' },
-    { id: 316, name: 'Machine Row', equipment: 'Machine', difficulty: 'Beginner', primary: 'Back', secondary: 'Biceps', description: 'Controlled rowing.' },
-    { id: 317, name: 'Barbell Shrugs', equipment: 'Barbell', difficulty: 'Beginner', primary: 'Traps', secondary: 'None', description: 'Trap builder.' },
-    { id: 318, name: 'Dumbbell Shrugs', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Traps', secondary: 'None', description: 'Trap isolation.' },
-    { id: 319, name: 'Cable Shrugs', equipment: 'Cable', difficulty: 'Beginner', primary: 'Traps', secondary: 'None', description: 'Constant tension.' },
-    { id: 320, name: 'Good Mornings', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Lower Back', secondary: 'Hamstrings', description: 'Lower back strength.' },
+    { id: 17, name: 'Single-Arm Dumbbell Row', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Back', secondary: 'Biceps', description: 'Unilateral back work.' },
+    { id: 18, name: 'Face Pulls', equipment: 'Cable', difficulty: 'Beginner', primary: 'Rear Delts', secondary: 'Upper Back', description: 'Shoulder health exercise.' },
+    { id: 19, name: 'Chin-ups', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Lats', secondary: 'Biceps', description: 'Bicep-focused pull-up.' },
+    { id: 20, name: 'Chest-Supported Row', equipment: 'Machine', difficulty: 'Beginner', primary: 'Back', secondary: 'Biceps', description: 'Isolates back muscles.' },
+    { id: 311, name: 'Wide Grip Pull-ups', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Lats', secondary: 'Biceps', description: 'Lat width focus.' },
+    { id: 312, name: 'Neutral Grip Pull-ups', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Lats', secondary: 'Biceps', description: 'Joint-friendly variation.' },
+    { id: 313, name: 'Pendlay Row', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Back', secondary: 'Biceps', description: 'Explosive rowing.' },
+    { id: 314, name: 'Meadows Row', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Back', secondary: 'Biceps', description: 'Unilateral landmine row.' },
+    { id: 315, name: 'Seal Row', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Back', secondary: 'Biceps', description: 'Eliminates momentum.' },
+    { id: 316, name: 'Inverted Row', equipment: 'Bodyweight', difficulty: 'Beginner', primary: 'Back', secondary: 'Biceps', description: 'Horizontal pulling.' },
+    { id: 317, name: 'Machine High Row', equipment: 'Machine', difficulty: 'Beginner', primary: 'Upper Back', secondary: 'Rear Delts', description: 'Upper back isolation.' },
+    { id: 318, name: 'Cable Pullover', equipment: 'Cable', difficulty: 'Beginner', primary: 'Lats', secondary: 'None', description: 'Lat isolation.' },
+    { id: 319, name: 'Dumbbell Pullover', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Lats', secondary: 'Chest', description: 'Classic lat stretch.' },
+    { id: 320, name: 'Rack Pulls', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Back', secondary: 'Traps', description: 'Partial deadlift variation.' },
+    { id: 321, name: 'Shrugs', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Traps', secondary: 'None', description: 'Trap builder.' },
+    { id: 322, name: 'Barbell Shrugs', equipment: 'Barbell', difficulty: 'Beginner', primary: 'Traps', secondary: 'None', description: 'Heavy trap work.' },
   ],
   legs: [
     { id: 21, name: 'Barbell Squat', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Quads', secondary: 'Glutes, Hamstrings', description: 'King of leg exercises.' },
+    { id: 22, name: 'Front Squat', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Quads', secondary: 'Core', description: 'Quad-focused squat.' },
     { id: 23, name: 'Romanian Deadlift', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Hamstrings', secondary: 'Glutes, Lower Back', description: 'Hamstring builder.' },
     { id: 24, name: 'Leg Press', equipment: 'Machine', difficulty: 'Beginner', primary: 'Quads', secondary: 'Glutes', description: 'Safe heavy loading.' },
     { id: 25, name: 'Leg Curl', equipment: 'Machine', difficulty: 'Beginner', primary: 'Hamstrings', secondary: 'None', description: 'Hamstring isolation.' },
     { id: 26, name: 'Leg Extension', equipment: 'Machine', difficulty: 'Beginner', primary: 'Quads', secondary: 'None', description: 'Quad isolation.' },
     { id: 27, name: 'Walking Lunges', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Quads', secondary: 'Glutes', description: 'Unilateral leg work.' },
+    { id: 28, name: 'Bulgarian Split Squat', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Quads', secondary: 'Glutes', description: 'Unilateral strength.' },
     { id: 29, name: 'Calf Raises', equipment: 'Machine', difficulty: 'Beginner', primary: 'Calves', secondary: 'None', description: 'Calf developer.' },
+    { id: 30, name: 'Hack Squat', equipment: 'Machine', difficulty: 'Intermediate', primary: 'Quads', secondary: 'Glutes', description: 'Machine squat variation.' },
     { id: 108, name: 'Hip Thrusts', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Glutes', secondary: 'Hamstrings', description: 'Best glute builder.' },
+    { id: 109, name: 'Goblet Squat', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Quads', secondary: 'Glutes', description: 'Beginner-friendly squat.' },
+    { id: 110, name: 'Nordic Curls', equipment: 'Bodyweight', difficulty: 'Advanced', primary: 'Hamstrings', secondary: 'None', description: 'Elite hamstring exercise.' },
+    { id: 323, name: 'Box Squat', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Quads', secondary: 'Glutes', description: 'Controlled depth squats.' },
+    { id: 324, name: 'Zercher Squat', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Quads', secondary: 'Core', description: 'Unique loading position.' },
+    { id: 325, name: 'Sumo Deadlift', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Glutes', secondary: 'Hamstrings, Adductors', description: 'Wide stance deadlift.' },
+    { id: 326, name: 'Stiff-Leg Deadlift', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Hamstrings', secondary: 'Lower Back', description: 'Hamstring stretch.' },
+    { id: 327, name: 'Single-Leg RDL', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Hamstrings', secondary: 'Glutes, Balance', description: 'Unilateral hamstring work.' },
+    { id: 328, name: 'Step-ups', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Quads', secondary: 'Glutes', description: 'Functional leg exercise.' },
+    { id: 329, name: 'Reverse Lunges', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Quads', secondary: 'Glutes', description: 'Knee-friendly lunges.' },
+    { id: 330, name: 'Sissy Squat', equipment: 'Bodyweight', difficulty: 'Advanced', primary: 'Quads', secondary: 'None', description: 'Quad isolation.' },
+    { id: 331, name: 'Cable Pull-Through', equipment: 'Cable', difficulty: 'Beginner', primary: 'Glutes', secondary: 'Hamstrings', description: 'Hip hinge pattern.' },
+    { id: 332, name: 'Glute Bridge', equipment: 'Bodyweight', difficulty: 'Beginner', primary: 'Glutes', secondary: 'Hamstrings', description: 'Basic glute work.' },
+    { id: 333, name: 'Single-Leg Hip Thrust', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Glutes', secondary: 'Hamstrings', description: 'Unilateral glute work.' },
+    { id: 334, name: 'Good Mornings', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Hamstrings', secondary: 'Lower Back', description: 'Hip hinge development.' },
+    { id: 335, name: 'Seated Calf Raise', equipment: 'Machine', difficulty: 'Beginner', primary: 'Calves', secondary: 'None', description: 'Soleus focus.' },
+    { id: 336, name: 'Donkey Calf Raise', equipment: 'Machine', difficulty: 'Beginner', primary: 'Calves', secondary: 'None', description: 'Calf stretch position.' },
   ],
   shoulders: [
     { id: 31, name: 'Overhead Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Triceps', description: 'Shoulder mass builder.' },
     { id: 32, name: 'Dumbbell Shoulder Press', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Shoulders', secondary: 'Triceps', description: 'Natural movement.' },
-    { id: 33, name: 'Lateral Raises', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Side Delts', secondary: 'None', description: 'Shoulder width.' },
-    { id: 34, name: 'Front Raises', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Front Delts', secondary: 'None', description: 'Front delt isolation.' },
+    { id: 33, name: 'Lateral Raises', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Side Delts', secondary: 'None', description: 'Shoulder width builder.' },
+    { id: 34, name: 'Cable Lateral Raises', equipment: 'Cable', difficulty: 'Beginner', primary: 'Side Delts', secondary: 'None', description: 'Constant tension laterals.' },
     { id: 35, name: 'Rear Delt Flyes', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Rear Delts', secondary: 'None', description: 'Rear delt isolation.' },
-    { id: 36, name: 'Arnold Press', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Triceps', description: 'Rotating press.' },
-    { id: 37, name: 'Cable Lateral Raises', equipment: 'Cable', difficulty: 'Beginner', primary: 'Side Delts', secondary: 'None', description: 'Constant tension.' },
-    { id: 38, name: 'Upright Row', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Traps', description: 'Shoulder and trap.' },
-    { id: 39, name: 'Military Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Triceps', description: 'Strict standing press.' },
-    { id: 40, name: 'Shrugs', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Traps', secondary: 'None', description: 'Trap builder.' },
-    { id: 111, name: 'Viking Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Triceps', description: 'Neutral grip press.' },
-    { id: 112, name: 'Lu Raises', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Side Delts', secondary: 'Front Delts', description: 'Combined raise.' },
-    { id: 210, name: 'Bradford Press', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Shoulders', secondary: 'Triceps', description: 'Front to back press.' },
-    { id: 211, name: 'Cuban Press', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Rotator Cuff', description: 'Shoulder health.' },
-    { id: 321, name: 'Seated DB Press', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Shoulders', secondary: 'Triceps', description: 'Strict shoulder press.' },
-    { id: 322, name: 'Machine Shoulder Press', equipment: 'Machine', difficulty: 'Beginner', primary: 'Shoulders', secondary: 'Triceps', description: 'Controlled pressing.' },
-    { id: 323, name: 'Behind Neck Press', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Shoulders', secondary: 'Triceps', description: 'Advanced press.' },
-    { id: 324, name: 'Push Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Legs, Triceps', description: 'Explosive pressing.' },
-    { id: 325, name: 'Cable Front Raises', equipment: 'Cable', difficulty: 'Beginner', primary: 'Front Delts', secondary: 'None', description: 'Constant tension.' },
-    { id: 326, name: 'Cable Rear Delt Fly', equipment: 'Cable', difficulty: 'Beginner', primary: 'Rear Delts', secondary: 'None', description: 'Rear delt cable.' },
-    { id: 327, name: 'Reverse Pec Deck', equipment: 'Machine', difficulty: 'Beginner', primary: 'Rear Delts', secondary: 'Upper Back', description: 'Rear delt machine.' },
-    { id: 328, name: 'Band Pull Aparts', equipment: 'Band', difficulty: 'Beginner', primary: 'Rear Delts', secondary: 'Upper Back', description: 'Rear delt activation.' },
-    { id: 329, name: 'Plate Raises', equipment: 'Plate', difficulty: 'Beginner', primary: 'Front Delts', secondary: 'None', description: 'Plate front raise.' },
-    { id: 330, name: 'Leaning Lateral Raise', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Side Delts', secondary: 'None', description: 'Enhanced ROM.' },
-    { id: 331, name: 'Y-Raises', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Shoulders', secondary: 'Upper Back', description: 'Y-position raise.' },
-    { id: 332, name: 'W-Raises', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Rear Delts', secondary: 'Rotator Cuff', description: 'W-position raise.' },
+    { id: 36, name: 'Arnold Press', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Triceps', description: 'Full delt development.' },
+    { id: 37, name: 'Front Raises', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Front Delts', secondary: 'None', description: 'Front delt focus.' },
+    { id: 337, name: 'Seated Overhead Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Triceps', description: 'Strict pressing.' },
+    { id: 338, name: 'Push Press', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Shoulders', secondary: 'Legs, Triceps', description: 'Explosive shoulder power.' },
+    { id: 339, name: 'Bradford Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'None', description: 'Continuous tension press.' },
+    { id: 340, name: 'Machine Shoulder Press', equipment: 'Machine', difficulty: 'Beginner', primary: 'Shoulders', secondary: 'Triceps', description: 'Controlled pressing.' },
+    { id: 341, name: 'Upright Row', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Side Delts', secondary: 'Traps', description: 'Lateral delt builder.' },
+    { id: 342, name: 'Cable Upright Row', equipment: 'Cable', difficulty: 'Intermediate', primary: 'Side Delts', secondary: 'Traps', description: 'Constant tension rows.' },
+    { id: 343, name: 'Reverse Pec Deck', equipment: 'Machine', difficulty: 'Beginner', primary: 'Rear Delts', secondary: 'None', description: 'Rear delt isolation.' },
+    { id: 344, name: 'Cable Rear Delt Flyes', equipment: 'Cable', difficulty: 'Beginner', primary: 'Rear Delts', secondary: 'None', description: 'Cable rear delt work.' },
+    { id: 345, name: 'Y-Raises', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Shoulders', secondary: 'Upper Back', description: 'Complete shoulder health.' },
+    { id: 346, name: 'Cuban Press', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Shoulders', secondary: 'Rotator Cuff', description: 'Shoulder stability.' },
+    { id: 347, name: 'Landmine Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Shoulders', secondary: 'Core', description: 'Angled pressing.' },
   ],
   arms: [
     { id: 41, name: 'Barbell Curl', equipment: 'Barbell', difficulty: 'Beginner', primary: 'Biceps', secondary: 'None', description: 'Classic bicep builder.' },
+    { id: 42, name: 'Dumbbell Curl', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Biceps', secondary: 'None', description: 'Bicep isolation.' },
     { id: 43, name: 'Hammer Curl', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Biceps', secondary: 'Forearms', description: 'Arm thickness.' },
     { id: 44, name: 'Preacher Curl', equipment: 'Barbell', difficulty: 'Beginner', primary: 'Biceps', secondary: 'None', description: 'Bicep peak.' },
+    { id: 45, name: 'Cable Curl', equipment: 'Cable', difficulty: 'Beginner', primary: 'Biceps', secondary: 'None', description: 'Constant tension biceps.' },
     { id: 46, name: 'Tricep Pushdown', equipment: 'Cable', difficulty: 'Beginner', primary: 'Triceps', secondary: 'None', description: 'Tricep isolation.' },
     { id: 47, name: 'Overhead Tricep Extension', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Triceps', secondary: 'None', description: 'Long head focus.' },
+    { id: 48, name: 'Skull Crushers', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Triceps', secondary: 'None', description: 'Tricep mass builder.' },
+    { id: 49, name: 'Rope Pushdown', equipment: 'Cable', difficulty: 'Beginner', primary: 'Triceps', secondary: 'None', description: 'Tricep isolation with rope.' },
     { id: 50, name: 'Close-Grip Bench Press', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Triceps', secondary: 'Chest', description: 'Compound tricep.' },
+    { id: 348, name: 'Concentration Curl', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Biceps', secondary: 'None', description: 'Strict bicep curl.' },
+    { id: 349, name: 'Incline Dumbbell Curl', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Biceps', secondary: 'None', description: 'Stretched position curl.' },
+    { id: 350, name: 'Spider Curl', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Biceps', secondary: 'None', description: 'Peak contraction curl.' },
+    { id: 351, name: 'Zottman Curl', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Biceps', secondary: 'Forearms', description: 'Dual-phase curl.' },
+    { id: 352, name: 'Drag Curl', equipment: 'Barbell', difficulty: 'Intermediate', primary: 'Biceps', secondary: 'None', description: 'Unique curl path.' },
+    { id: 353, name: 'Cable Hammer Curl', equipment: 'Cable', difficulty: 'Beginner', primary: 'Biceps', secondary: 'Forearms', description: 'Cable variation.' },
+    { id: 354, name: 'Diamond Push-ups', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Triceps', secondary: 'Chest', description: 'Bodyweight triceps.' },
+    { id: 355, name: 'Bench Dips', equipment: 'Bodyweight', difficulty: 'Beginner', primary: 'Triceps', secondary: 'Chest', description: 'Beginner tricep dips.' },
+    { id: 356, name: 'Dumbbell Kickbacks', equipment: 'Dumbbell', difficulty: 'Beginner', primary: 'Triceps', secondary: 'None', description: 'Tricep isolation.' },
+    { id: 357, name: 'Cable Overhead Extension', equipment: 'Cable', difficulty: 'Beginner', primary: 'Triceps', secondary: 'None', description: 'Long head cable work.' },
+    { id: 358, name: 'JM Press', equipment: 'Barbell', difficulty: 'Advanced', primary: 'Triceps', secondary: 'None', description: 'Powerlifter tricep builder.' },
+    { id: 359, name: 'Tate Press', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Triceps', secondary: 'None', description: 'Unique elbow angle.' },
+    { id: 360, name: 'Wrist Curls', equipment: 'Barbell', difficulty: 'Beginner', primary: 'Forearms', secondary: 'None', description: 'Forearm flexors.' },
+    { id: 361, name: 'Reverse Wrist Curls', equipment: 'Barbell', difficulty: 'Beginner', primary: 'Forearms', secondary: 'None', description: 'Forearm extensors.' },
+    { id: 362, name: 'Farmers Walk', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Forearms', secondary: 'Core, Traps', description: 'Grip strength.' },
   ],
   abs: [
     { id: 51, name: 'Planks', equipment: 'Bodyweight', difficulty: 'Beginner', primary: 'Core', secondary: 'None', description: 'Core foundation.' },
@@ -128,6 +150,12 @@ const EXERCISE_LIBRARY = {
     { id: 223, name: 'Decline Sit-ups', equipment: 'Bench', difficulty: 'Intermediate', primary: 'Abs', secondary: 'Hip Flexors', description: 'Weighted abs option.' },
     { id: 224, name: 'Ab Crunch Machine', equipment: 'Machine', difficulty: 'Beginner', primary: 'Abs', secondary: 'None', description: 'Controlled resistance.' },
     { id: 225, name: 'Plank Jacks', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Core', secondary: 'Cardio', description: 'Core with cardio.' },
+    { id: 363, name: 'L-Sit Hold', equipment: 'Bodyweight', difficulty: 'Advanced', primary: 'Core', secondary: 'Hip Flexors', description: 'Isometric core.' },
+    { id: 364, name: 'Copenhagen Plank', equipment: 'Bodyweight', difficulty: 'Advanced', primary: 'Obliques', secondary: 'Adductors', description: 'Advanced oblique work.' },
+    { id: 365, name: 'Bear Crawl', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Core', secondary: 'Full Body', description: 'Dynamic core stability.' },
+    { id: 366, name: 'Hanging Knee Raises', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Lower Abs', secondary: 'Hip Flexors', description: 'Easier hanging variation.' },
+    { id: 367, name: 'Suitcase Carry', equipment: 'Dumbbell', difficulty: 'Intermediate', primary: 'Obliques', secondary: 'Core', description: 'Anti-lateral flexion.' },
+    { id: 368, name: 'Turkish Get-Up', equipment: 'Kettlebell', difficulty: 'Advanced', primary: 'Core', secondary: 'Full Body', description: 'Full body stability.' },
   ],
   cardio: [
     { id: 61, name: 'Treadmill Running', equipment: 'Machine', difficulty: 'Beginner', primary: 'Cardio', secondary: 'Legs', description: 'Classic cardio.' },
@@ -144,18 +172,19 @@ const EXERCISE_LIBRARY = {
     { id: 227, name: 'Shadow Boxing', equipment: 'None', difficulty: 'Beginner', primary: 'Cardio', secondary: 'Shoulders', description: 'Fun cardio option.' },
     { id: 228, name: 'Burpees', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Cardio', secondary: 'Full Body', description: 'Full-body conditioning.' },
     { id: 229, name: 'Mountain Climbers', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Cardio', secondary: 'Core', description: 'Core and cardio.' },
-  ],
-  hiit: [
-    { id: 69, name: 'Burpees', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Full Body', secondary: 'Cardio', description: 'Ultimate conditioning.' },
+    { id: 369, name: 'Sprint Intervals', equipment: 'Track', difficulty: 'Advanced', primary: 'Cardio', secondary: 'Legs', description: 'High-intensity sprints.' },
+    { id: 370, name: 'Box Jumps', equipment: 'Box', difficulty: 'Intermediate', primary: 'Cardio', secondary: 'Legs, Power', description: 'Explosive power.' },
+    { id: 371, name: 'Ski Erg', equipment: 'Machine', difficulty: 'Intermediate', primary: 'Cardio', secondary: 'Upper Body', description: 'Upper body conditioning.' },
+    { id: 372, name: 'Kettlebell Swings', equipment: 'Kettlebell', difficulty: 'Intermediate', primary: 'Cardio', secondary: 'Glutes, Hamstrings', description: 'Power endurance.' },
   ],
 };
 
+// 4-week rotation system with templates A, B, C, D
 const WORKOUT_TEMPLATES = {
-  push: [
+  push_aa: [
     { exerciseId: 1, targetSets: 4, targetReps: '6-8' },
     { exerciseId: 3, targetSets: 4, targetReps: '8-10' },
     { exerciseId: 6, targetSets: 3, targetReps: '12-15' },
-    { exerciseId: 7, targetSets: 3, targetReps: '12-15' },
     { exerciseId: 31, targetSets: 4, targetReps: '8-10' },
     { exerciseId: 33, targetSets: 3, targetReps: '12-15' },
     { exerciseId: 35, targetSets: 3, targetReps: '15-20' },
@@ -163,11 +192,92 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 47, targetSets: 3, targetReps: '10-12' },
     { exerciseId: 51, targetSets: 3, targetReps: '60s' },
     { exerciseId: 60, targetSets: 3, targetReps: '15-20' },
+  ],
+  push_ab: [
+    { exerciseId: 2, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 4, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 7, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 32, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 34, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 18, targetSets: 3, targetReps: '15-20' },
+    { exerciseId: 50, targetSets: 3, targetReps: '8-10' },
+    { exerciseId: 48, targetSets: 3, targetReps: '10-12' },
     { exerciseId: 53, targetSets: 3, targetReps: '20' },
-    { exerciseId: 55, targetSets: 3, targetReps: '12-15' },
     { exerciseId: 119, targetSets: 3, targetReps: '12 each' },
   ],
-  pull: [
+  push_ba: [
+    { exerciseId: 303, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 301, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 305, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 36, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 37, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 343, targetSets: 3, targetReps: '15-20' },
+    { exerciseId: 49, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 356, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 52, targetSets: 3, targetReps: '20' },
+    { exerciseId: 54, targetSets: 3, targetReps: '20' },
+  ],
+  push_bb: [
+    { exerciseId: 304, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 5, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 9, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 337, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 341, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 344, targetSets: 3, targetReps: '15-20' },
+    { exerciseId: 354, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 357, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 215, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 222, targetSets: 3, targetReps: '15 each' },
+  ],
+  push_ca: [
+    { exerciseId: 309, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 302, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 310, targetSets: 3, targetReps: '10 each' },
+    { exerciseId: 338, targetSets: 4, targetReps: '6-8' },
+    { exerciseId: 342, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 35, targetSets: 3, targetReps: '15-20' },
+    { exerciseId: 358, targetSets: 3, targetReps: '8-10' },
+    { exerciseId: 47, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 59, targetSets: 3, targetReps: '12' },
+    { exerciseId: 55, targetSets: 3, targetReps: '15' },
+  ],
+  push_cb: [
+    { exerciseId: 8, targetSets: 4, targetReps: '15-20' },
+    { exerciseId: 307, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 7, targetSets: 3, targetReps: '15' },
+    { exerciseId: 340, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 345, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 18, targetSets: 4, targetReps: '20' },
+    { exerciseId: 355, targetSets: 3, targetReps: '15' },
+    { exerciseId: 359, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 220, targetSets: 3, targetReps: '12' },
+    { exerciseId: 363, targetSets: 3, targetReps: '30s' },
+  ],
+  push_da: [
+    { exerciseId: 306, targetSets: 4, targetReps: '12-15' },
+    { exerciseId: 308, targetSets: 3, targetReps: '15' },
+    { exerciseId: 10, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 339, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 346, targetSets: 3, targetReps: '12' },
+    { exerciseId: 344, targetSets: 3, targetReps: '15' },
+    { exerciseId: 46, targetSets: 4, targetReps: '15' },
+    { exerciseId: 48, targetSets: 3, targetReps: '12' },
+    { exerciseId: 57, targetSets: 3, targetReps: '10' },
+    { exerciseId: 225, targetSets: 3, targetReps: '45s' },
+  ],
+  push_db: [
+    { exerciseId: 1, targetSets: 4, targetReps: '5-6' },
+    { exerciseId: 3, targetSets: 4, targetReps: '6-8' },
+    { exerciseId: 301, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 347, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 33, targetSets: 4, targetReps: '15' },
+    { exerciseId: 343, targetSets: 3, targetReps: '20' },
+    { exerciseId: 50, targetSets: 4, targetReps: '6-8' },
+    { exerciseId: 356, targetSets: 3, targetReps: '15' },
+    { exerciseId: 223, targetSets: 3, targetReps: '15' },
+    { exerciseId: 367, targetSets: 3, targetReps: '45s each' },
+  ],
+  pull_aa: [
     { exerciseId: 11, targetSets: 4, targetReps: '5-6' },
     { exerciseId: 12, targetSets: 4, targetReps: '6-10' },
     { exerciseId: 13, targetSets: 4, targetReps: '8-10' },
@@ -176,23 +286,172 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 18, targetSets: 4, targetReps: '15-20' },
     { exerciseId: 41, targetSets: 3, targetReps: '10-12' },
     { exerciseId: 43, targetSets: 3, targetReps: '10-12' },
-    { exerciseId: 44, targetSets: 3, targetReps: '12-15' },
     { exerciseId: 61, targetSets: 1, targetReps: '20 min' },
   ],
-  legs: [
+  pull_ab: [
+    { exerciseId: 19, targetSets: 4, targetReps: '6-10' },
+    { exerciseId: 14, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 17, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 20, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 318, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 321, targetSets: 4, targetReps: '12-15' },
+    { exerciseId: 44, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 45, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 63, targetSets: 1, targetReps: '15 min' },
+  ],
+  pull_ba: [
+    { exerciseId: 320, targetSets: 4, targetReps: '5-6' },
+    { exerciseId: 311, targetSets: 4, targetReps: '6-10' },
+    { exerciseId: 313, targetSets: 4, targetReps: '6-8' },
+    { exerciseId: 315, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 319, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 322, targetSets: 4, targetReps: '12-15' },
+    { exerciseId: 348, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 351, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 372, targetSets: 1, targetReps: '15 min' },
+  ],
+  pull_bb: [
+    { exerciseId: 312, targetSets: 4, targetReps: '8-12' },
+    { exerciseId: 314, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 316, targetSets: 4, targetReps: '12-15' },
+    { exerciseId: 317, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 15, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 18, targetSets: 4, targetReps: '15-20' },
+    { exerciseId: 349, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 350, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 62, targetSets: 1, targetReps: '20 min' },
+  ],
+  pull_ca: [
+    { exerciseId: 12, targetSets: 4, targetReps: '8-12' },
+    { exerciseId: 13, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 17, targetSets: 4, targetReps: '12 each' },
+    { exerciseId: 16, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 318, targetSets: 3, targetReps: '15' },
+    { exerciseId: 321, targetSets: 4, targetReps: '15' },
+    { exerciseId: 42, targetSets: 3, targetReps: '12' },
+    { exerciseId: 353, targetSets: 3, targetReps: '12' },
+    { exerciseId: 64, targetSets: 1, targetReps: '25 min' },
+  ],
+  pull_cb: [
+    { exerciseId: 11, targetSets: 3, targetReps: '8-10' },
+    { exerciseId: 19, targetSets: 4, targetReps: '8-12' },
+    { exerciseId: 14, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 20, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 319, targetSets: 3, targetReps: '15' },
+    { exerciseId: 322, targetSets: 4, targetReps: '15' },
+    { exerciseId: 352, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 43, targetSets: 3, targetReps: '12' },
+    { exerciseId: 66, targetSets: 1, targetReps: '20 min' },
+  ],
+  pull_da: [
+    { exerciseId: 320, targetSets: 4, targetReps: '6-8' },
+    { exerciseId: 311, targetSets: 4, targetReps: '8-12' },
+    { exerciseId: 315, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 16, targetSets: 3, targetReps: '15' },
+    { exerciseId: 15, targetSets: 3, targetReps: '15' },
+    { exerciseId: 18, targetSets: 4, targetReps: '20' },
+    { exerciseId: 44, targetSets: 3, targetReps: '15' },
+    { exerciseId: 360, targetSets: 3, targetReps: '15' },
+    { exerciseId: 67, targetSets: 1, targetReps: '20 min' },
+  ],
+  pull_db: [
+    { exerciseId: 316, targetSets: 4, targetReps: '15-20' },
+    { exerciseId: 314, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 17, targetSets: 4, targetReps: '12 each' },
+    { exerciseId: 317, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 318, targetSets: 3, targetReps: '15' },
+    { exerciseId: 321, targetSets: 4, targetReps: '15' },
+    { exerciseId: 348, targetSets: 3, targetReps: '15' },
+    { exerciseId: 362, targetSets: 3, targetReps: '60s' },
+    { exerciseId: 371, targetSets: 1, targetReps: '15 min' },
+  ],
+  legs_aa: [
     { exerciseId: 21, targetSets: 4, targetReps: '6-8' },
     { exerciseId: 23, targetSets: 4, targetReps: '8-10' },
     { exerciseId: 24, targetSets: 3, targetReps: '10-12' },
     { exerciseId: 108, targetSets: 4, targetReps: '10-12' },
     { exerciseId: 25, targetSets: 3, targetReps: '12-15' },
     { exerciseId: 26, targetSets: 3, targetReps: '12-15' },
-    { exerciseId: 27, targetSets: 3, targetReps: '12 each' },
     { exerciseId: 29, targetSets: 4, targetReps: '15-20' },
     { exerciseId: 54, targetSets: 3, targetReps: '20' },
+    { exerciseId: 55, targetSets: 3, targetReps: '12-15' },
+  ],
+  legs_ab: [
+    { exerciseId: 22, targetSets: 4, targetReps: '6-8' },
+    { exerciseId: 108, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 28, targetSets: 3, targetReps: '10 each' },
+    { exerciseId: 27, targetSets: 3, targetReps: '12 each' },
+    { exerciseId: 25, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 30, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 335, targetSets: 4, targetReps: '15-20' },
     { exerciseId: 117, targetSets: 3, targetReps: '45s each' },
-    { exerciseId: 219, targetSets: 3, targetReps: '15-20' },
     { exerciseId: 118, targetSets: 3, targetReps: '30-45s' },
-    { exerciseId: 63, targetSets: 1, targetReps: '15 min' },
+  ],
+  legs_ba: [
+    { exerciseId: 109, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 325, targetSets: 4, targetReps: '6-8' },
+    { exerciseId: 323, targetSets: 3, targetReps: '8-10' },
+    { exerciseId: 333, targetSets: 4, targetReps: '12 each' },
+    { exerciseId: 110, targetSets: 3, targetReps: '8-10' },
+    { exerciseId: 328, targetSets: 3, targetReps: '12 each' },
+    { exerciseId: 336, targetSets: 4, targetReps: '15-20' },
+    { exerciseId: 216, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 220, targetSets: 3, targetReps: '12-15' },
+  ],
+  legs_bb: [
+    { exerciseId: 324, targetSets: 4, targetReps: '6-8' },
+    { exerciseId: 334, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 329, targetSets: 3, targetReps: '12 each' },
+    { exerciseId: 331, targetSets: 4, targetReps: '12-15' },
+    { exerciseId: 327, targetSets: 3, targetReps: '10 each' },
+    { exerciseId: 24, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 29, targetSets: 4, targetReps: '20-25' },
+    { exerciseId: 364, targetSets: 3, targetReps: '30s each' },
+    { exerciseId: 365, targetSets: 3, targetReps: '45s' },
+  ],
+  legs_ca: [
+    { exerciseId: 21, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 326, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 30, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 332, targetSets: 4, targetReps: '15-20' },
+    { exerciseId: 25, targetSets: 3, targetReps: '15' },
+    { exerciseId: 328, targetSets: 3, targetReps: '15 each' },
+    { exerciseId: 335, targetSets: 4, targetReps: '20' },
+    { exerciseId: 59, targetSets: 3, targetReps: '15' },
+    { exerciseId: 218, targetSets: 3, targetReps: '30s' },
+  ],
+  legs_cb: [
+    { exerciseId: 22, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 23, targetSets: 4, targetReps: '10-12' },
+    { exerciseId: 27, targetSets: 3, targetReps: '15 each' },
+    { exerciseId: 108, targetSets: 4, targetReps: '12-15' },
+    { exerciseId: 110, targetSets: 3, targetReps: '10-12' },
+    { exerciseId: 26, targetSets: 3, targetReps: '15-20' },
+    { exerciseId: 29, targetSets: 4, targetReps: '25' },
+    { exerciseId: 366, targetSets: 3, targetReps: '15' },
+    { exerciseId: 51, targetSets: 3, targetReps: '90s' },
+  ],
+  legs_da: [
+    { exerciseId: 323, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 325, targetSets: 4, targetReps: '8-10' },
+    { exerciseId: 24, targetSets: 4, targetReps: '15-20' },
+    { exerciseId: 333, targetSets: 3, targetReps: '15 each' },
+    { exerciseId: 327, targetSets: 3, targetReps: '12 each' },
+    { exerciseId: 26, targetSets: 3, targetReps: '20' },
+    { exerciseId: 336, targetSets: 4, targetReps: '20' },
+    { exerciseId: 56, targetSets: 3, targetReps: '12' },
+    { exerciseId: 367, targetSets: 3, targetReps: '60s each' },
+  ],
+  legs_db: [
+    { exerciseId: 109, targetSets: 4, targetReps: '12-15' },
+    { exerciseId: 331, targetSets: 4, targetReps: '15-20' },
+    { exerciseId: 329, targetSets: 3, targetReps: '15 each' },
+    { exerciseId: 332, targetSets: 4, targetReps: '20-25' },
+    { exerciseId: 25, targetSets: 3, targetReps: '20' },
+    { exerciseId: 30, targetSets: 3, targetReps: '15' },
+    { exerciseId: 335, targetSets: 4, targetReps: '25' },
+    { exerciseId: 368, targetSets: 3, targetReps: '5 each' },
+    { exerciseId: 219, targetSets: 3, targetReps: '20' },
   ],
   rest: [],
 };
@@ -226,7 +485,23 @@ const SetLogger = ({ setNumber, onLog, previousWeight }) => {
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('today');
-  const [workoutHistory, setWorkoutHistory] = useState({});
+  const [workoutHistory, setWorkoutHistory] = useState(() => {
+    const saved = localStorage.getItem('workoutHistory');
+    return saved ? JSON.parse(saved) : {};
+  });
+  
+  // Track the current training phase (week cycle)
+  const [trainingPhase, setTrainingPhase] = useState(() => {
+    const saved = localStorage.getItem('trainingPhase');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return {
+      startDate: new Date().toISOString().split('T')[0],
+      currentPhase: 'a'
+    };
+  });
+  
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [showSwapModal, setShowSwapModal] = useState(false);
   const [swapExerciseId, setSwapExerciseId] = useState(null);
@@ -235,19 +510,86 @@ const App = () => {
   const [aiInput, setAiInput] = useState('');
   const [selectedLibraryExercise, setSelectedLibraryExercise] = useState(null);
 
+  // Calculate current week and phase based on start date
+  const getCurrentPhase = () => {
+    const startDate = new Date(trainingPhase.startDate);
+    const today = new Date();
+    const diffTime = Math.abs(today - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const weekNumber = Math.floor(diffDays / 7);
+    const phaseIndex = weekNumber % 4;
+    const phases = ['a', 'b', 'c', 'd'];
+    return phases[phaseIndex];
+  };
+
+  const currentPhase = getCurrentPhase();
+  const weeksInCurrentPhase = Math.floor((new Date() - new Date(trainingPhase.startDate)) / (1000 * 60 * 60 * 24 * 7)) % 4 + 1;
+
+  // Save training phase when it changes
+  React.useEffect(() => {
+    localStorage.setItem('trainingPhase', JSON.stringify(trainingPhase));
+  }, [trainingPhase]);
+
   const getDayOfWeek = () => {
     const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     return days[new Date().getDay()];
   };
 
+  // Updated to include phase in workout type
   const getWorkoutType = (dayName) => {
-    const schedule = { monday: 'push', tuesday: 'pull', wednesday: 'legs', thursday: 'push', friday: 'pull', saturday: 'legs', sunday: 'rest' };
-    return schedule[dayName] || 'rest';
+    const baseSchedule = { 
+      monday: 'push',
+      tuesday: 'pull',
+      wednesday: 'legs',
+      thursday: 'push',
+      friday: 'pull',
+      saturday: 'legs',
+      sunday: 'rest' 
+    };
+    
+    const baseType = baseSchedule[dayName];
+    if (baseType === 'rest') return 'rest';
+    
+    // For first occurrence in the week, use _a, for second use _b
+    const isSecondOccurrence = ['thursday', 'friday', 'saturday'].includes(dayName);
+    const variant = isSecondOccurrence ? 'b' : 'a';
+    
+    return `${baseType}_${currentPhase}${variant}`;
   };
 
   const currentDay = getDayOfWeek();
   const todayWorkoutType = getWorkoutType(currentDay);
-  const [todayWorkout, setTodayWorkout] = useState(WORKOUT_TEMPLATES[todayWorkoutType] || []);
+  const [todayWorkout, setTodayWorkout] = useState(() => {
+    const saved = localStorage.getItem('todayWorkout');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.day === currentDay && parsed.phase === currentPhase) {
+        return parsed.workout;
+      }
+    }
+    return WORKOUT_TEMPLATES[todayWorkoutType] || [];
+  });
+
+  // Save workout history to localStorage whenever it changes
+  React.useEffect(() => {
+    localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
+  }, [workoutHistory]);
+
+  // Save today's workout to localStorage whenever it changes
+  React.useEffect(() => {
+    localStorage.setItem('todayWorkout', JSON.stringify({
+      day: currentDay,
+      phase: currentPhase,
+      workout: todayWorkout
+    }));
+  }, [todayWorkout, currentDay, currentPhase]);
+
+  // Update workout when phase changes
+  React.useEffect(() => {
+    const newWorkoutType = getWorkoutType(currentDay);
+    const newWorkout = WORKOUT_TEMPLATES[newWorkoutType] || [];
+    setTodayWorkout(newWorkout);
+  }, [currentPhase]);
 
   const getAllExercises = () => Object.values(EXERCISE_LIBRARY).flat();
   const getExerciseById = (id) => getAllExercises().find(ex => ex.id === id);
@@ -266,7 +608,7 @@ const App = () => {
   const getSimilarExercises = (exerciseId) => {
     const exercise = getExerciseById(exerciseId);
     if (!exercise) return [];
-    return getAllExercises().filter(ex => ex.id !== exerciseId && (ex.primary === exercise.primary || ex.secondary.includes(exercise.primary))).slice(0, 8);
+    return getAllExercises().filter(ex => ex.id !== exerciseId && (ex.primary === exercise.primary || ex.secondary.includes(exercise.primary))).slice(0, 10);
   };
 
   const swapExercise = (oldId, newId) => {
@@ -274,8 +616,51 @@ const App = () => {
     setShowSwapModal(false);
   };
 
+  const resetTrainingPhase = () => {
+    if (window.confirm('This will reset your training cycle and start fresh with Phase A. Continue?')) {
+      setTrainingPhase({
+        startDate: new Date().toISOString().split('T')[0],
+        currentPhase: 'a'
+      });
+    }
+  };
+
   const getAIResponse = (message) => {
-    return 'I can help with: Exercise form, Alternative exercises, Weight selection, Programming advice. What would you like to know?';
+    const lowerMsg = message.toLowerCase();
+    const exercise = selectedExercise ? getExerciseById(selectedExercise) : null;
+    
+    if (lowerMsg.includes('phase') || lowerMsg.includes('rotation') || lowerMsg.includes('cycle')) {
+      return `Training Phase System:\n\n**Current Status:**\n• You're in Phase ${currentPhase.toUpperCase()}\n• Week ${weeksInCurrentPhase} of this phase\n• Phases rotate every 4 weeks automatically\n\n**How It Works:**\n• Phase A (Weeks 1-4): Foundation exercises\n• Phase B (Weeks 5-8): Variation for different angles\n• Phase C (Weeks 9-12): Advanced variations\n• Phase D (Weeks 13-16): Unique movements\n\n**Benefits:**\n• Prevents adaptation and plateaus\n• Keeps training interesting and fresh\n• Reduces overuse injury risk\n• Develops muscles from all angles\n• Automatic progression built-in\n\nAfter 16 weeks, the cycle repeats but you'll be stronger!`;
+    }
+    
+    if (lowerMsg.includes('form') || lowerMsg.includes('technique') || lowerMsg.includes('how')) {
+      if (exercise) {
+        return `Great question about ${exercise.name}!\n\nKey Form Points:\n• Keep your core tight and engaged\n• Control the weight - no swinging or momentum\n• Full range of motion for maximum muscle activation\n• Breathe properly: exhale on exertion, inhale on the way down\n• Start lighter to perfect form before adding weight\n\n${exercise.primary === 'Chest' ? '• Retract shoulder blades and keep them pinned\n• Keep elbows at about 45 degrees\n• Lower until you feel a stretch' : ''}\n${exercise.primary === 'Back' ? '• Pull with your back muscles, not your arms\n• Squeeze shoulder blades together at peak\n• Keep chest up and core braced' : ''}\n${exercise.primary === 'Shoulders' ? '• Keep core tight to protect lower back\n• Press straight up, not forward\n• Full lockout at the top' : ''}\n\nWant tips on a specific part of the movement?`;
+      }
+      return 'Ask me about form for any exercise! Click the lightning bolt icon next to an exercise, then ask me about it.';
+    }
+    
+    if (lowerMsg.includes('substitute') || lowerMsg.includes('alternative') || lowerMsg.includes('swap') || lowerMsg.includes('different')) {
+      if (exercise) {
+        const similar = getSimilarExercises(selectedExercise);
+        return `Great alternatives to ${exercise.name}:\n\n${similar.slice(0, 5).map(ex => `• ${ex.name} (${ex.equipment})`).join('\n')}\n\nAll of these target similar muscles. Use the refresh button to swap exercises easily!`;
+      }
+      return 'Click the lightning bolt next to any exercise to get alternatives for it!';
+    }
+    
+    if (lowerMsg.includes('weight') || lowerMsg.includes('heavy') || lowerMsg.includes('start') || lowerMsg.includes('much')) {
+      return `Weight Selection Guide:\n\n• For Strength (4-6 reps): Use 85-90% of your max, rest 3-5 min\n• For Hypertrophy (8-12 reps): Use 70-80% of your max, rest 2-3 min\n• For Endurance (15+ reps): Use 60-70% of your max, rest 1-2 min\n\nStarting Out:\n• Pick a weight you can do for 2-3 reps MORE than your target\n• If you can't complete your target reps, go lighter\n• If you complete all sets easily, increase by 5-10% next time\n\nProgression:\n• Add 5lbs for upper body exercises\n• Add 10lbs for lower body exercises\n• When you hit the top of your rep range for all sets, increase weight!`;
+    }
+    
+    if (lowerMsg.includes('progress') || lowerMsg.includes('plateau') || lowerMsg.includes('stuck') || lowerMsg.includes('gain')) {
+      return `Breaking Through Plateaus:\n\n**Progressive Overload Strategies:**\n• Increase weight by 5-10% when you hit rep targets\n• Add 1-2 more reps per set\n• Add an extra set\n• Decrease rest time by 15-30 seconds\n• Slow down the eccentric (lowering) phase\n\n**Your Program Already Helps:**\n• Exercises rotate every 4 weeks automatically\n• This prevents adaptation and keeps progress coming\n• Different phases work muscles from new angles\n\n**Recovery & Nutrition:**\n• Get 7-9 hours of quality sleep\n• Eat 0.8-1g protein per pound of bodyweight\n• Stay in a slight caloric surplus for muscle gain\n• Take a deload week every 4-6 weeks (reduce weight by 40-50%)\n\nThe rotation system is designed to keep you progressing!`;
+    }
+    
+    if (lowerMsg.includes('split') || lowerMsg.includes('routine') || lowerMsg.includes('program') || lowerMsg.includes('schedule') || lowerMsg.includes('variety')) {
+      return `Your Advanced Program:\n\n**Push/Pull/Legs with 4-Week Rotation:**\n✅ Automatically changes exercises every 4 weeks!\n✅ Hits each muscle group twice per week\n✅ 4 different phases that rotate continuously\n✅ Over 200 exercises in the library\n\n**Weekly Split:**\n• Monday: Push (Chest, Shoulders, Triceps)\n• Tuesday: Pull (Back, Biceps)\n• Wednesday: Legs (Quads, Hamstrings, Glutes)\n• Thursday: Push (Different exercises)\n• Friday: Pull (Different exercises)\n• Saturday: Legs (Different exercises)\n• Sunday: Rest\n\n**Current Phase: ${currentPhase.toUpperCase()} (Week ${weeksInCurrentPhase})**\n\n**Why This Works:**\n• Prevents boredom and plateaus\n• Reduces overuse injuries\n• Develops complete muscle balance\n• Constant variety keeps you motivated\n• Automatic progression system\n\nYour exercises will rotate to Phase ${currentPhase === 'd' ? 'A' : String.fromCharCode(currentPhase.charCodeAt(0) + 1).toUpperCase()} in ${4 - weeksInCurrentPhase} week(s)!`;
+    }
+    
+    return `I'm your AI coach! I can help with:\n\n💪 Exercise Form & Technique\n🔄 Alternative Exercises\n⚖️ Weight Selection & Progression\n📊 Breaking Through Plateaus\n🏃 Cardio & Conditioning\n💊 Nutrition & Diet\n😴 Recovery & Sleep\n📅 Program Design\n🔁 Training Phase System\n🏋️ Muscle Building Tips\n\nJust ask me anything! Try:\n• "Tell me about the phase rotation"\n• "How much weight should I use?"\n• "What phase am I in?"\n• "Tips for bench press form?"`;
   };
 
   const sendAIMessage = () => {
@@ -292,10 +677,17 @@ const App = () => {
   };
 
   const getWorkoutLabel = (type) => {
-    if (type === 'push') return 'Push - Chest, Shoulders, Triceps';
-    if (type === 'pull') return 'Pull - Back, Biceps';
-    if (type === 'legs') return 'Legs - Quads, Hamstrings, Glutes';
+    if (type.startsWith('push')) return `Push (Phase ${currentPhase.toUpperCase()}) - Chest, Shoulders, Triceps`;
+    if (type.startsWith('pull')) return `Pull (Phase ${currentPhase.toUpperCase()}) - Back, Biceps`;
+    if (type.startsWith('legs')) return `Legs (Phase ${currentPhase.toUpperCase()}) - Quads, Hamstrings, Glutes`;
     return 'Rest Day';
+  };
+
+  const getWorkoutDisplayType = (type) => {
+    if (type.startsWith('push')) return 'push';
+    if (type.startsWith('pull')) return 'pull';
+    if (type.startsWith('legs')) return 'legs';
+    return 'rest';
   };
 
   return (
@@ -304,9 +696,15 @@ const App = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Dumbbell className="w-8 h-8 text-blue-400" />
-            <h1 className="text-2xl font-bold">AI Workout Tracker</h1>
+            <div>
+              <h1 className="text-2xl font-bold">AI Workout Tracker</h1>
+              <p className="text-xs text-slate-400">Phase {currentPhase.toUpperCase()} • Week {weeksInCurrentPhase}</p>
+            </div>
           </div>
-          <div className="text-sm text-slate-400">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+          <div className="text-right">
+            <div className="text-sm text-slate-400">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+            <div className="text-xs text-blue-400 mt-1">{Math.floor((new Date() - new Date(trainingPhase.startDate)) / (1000 * 60 * 60 * 24))} days into cycle</div>
+          </div>
         </div>
       </div>
 
@@ -331,20 +729,34 @@ const App = () => {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {activeTab === 'today' && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center flex-wrap gap-4">
+            <div className="flex justify-between items-start flex-wrap gap-4">
               <div>
-                <h2 className="text-2xl font-bold">{todayWorkoutType === 'rest' ? 'Rest Day' : todayWorkoutType.charAt(0).toUpperCase() + todayWorkoutType.slice(1) + ' Day'}</h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-bold">
+                    {todayWorkoutType === 'rest' ? 'Rest Day' : getWorkoutDisplayType(todayWorkoutType).charAt(0).toUpperCase() + getWorkoutDisplayType(todayWorkoutType).slice(1) + ' Day'}
+                  </h2>
+                  <span className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-sm font-semibold">
+                    Phase {currentPhase.toUpperCase()}
+                  </span>
+                </div>
                 <p className="text-slate-400 mt-1">
-                  {todayWorkoutType === 'push' && 'Chest, Shoulders, Triceps'}
-                  {todayWorkoutType === 'pull' && 'Back, Biceps'}
-                  {todayWorkoutType === 'legs' && 'Quads, Hamstrings, Glutes'}
+                  {getWorkoutDisplayType(todayWorkoutType) === 'push' && 'Chest, Shoulders, Triceps'}
+                  {getWorkoutDisplayType(todayWorkoutType) === 'pull' && 'Back, Biceps'}
+                  {getWorkoutDisplayType(todayWorkoutType) === 'legs' && 'Quads, Hamstrings, Glutes'}
                   {todayWorkoutType === 'rest' && 'Recovery day'}
                 </p>
+                <p className="text-xs text-slate-500 mt-1">Exercises rotate in {4 - weeksInCurrentPhase} week(s)</p>
               </div>
-              <button onClick={() => setShowAIChat(true)} className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-4 py-2 rounded-lg">
-                <MessageSquare className="w-5 h-5" />
-                AI Coach
-              </button>
+              <div className="flex gap-2">
+                <button onClick={() => setShowAIChat(true)} className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-4 py-2 rounded-lg">
+                  <MessageSquare className="w-5 h-5" />
+                  AI Coach
+                </button>
+                <button onClick={resetTrainingPhase} className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg">
+                  <RotateCcw className="w-5 h-5" />
+                  Reset Cycle
+                </button>
+              </div>
             </div>
 
             {todayWorkoutType === 'rest' ? (
@@ -355,6 +767,7 @@ const App = () => {
             ) : (
               todayWorkout.map((workout, idx) => {
                 const exercise = getExerciseById(workout.exerciseId);
+                if (!exercise) return null;
                 const history = workoutHistory[workout.exerciseId] || [];
                 const lastSession = history[history.length - 1];
 
@@ -367,6 +780,8 @@ const App = () => {
                           <span>{exercise.equipment}</span>
                           <span>•</span>
                           <span>{workout.targetSets} sets x {workout.targetReps}</span>
+                          <span>•</span>
+                          <span className="text-purple-400">{exercise.difficulty}</span>
                         </div>
                         {lastSession && <div className="text-sm text-green-400 mt-1">Last: {lastSession.weight}lbs x {lastSession.reps}</div>}
                       </div>
@@ -389,31 +804,135 @@ const App = () => {
 
         {activeTab === 'week' && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Weekly Plan</h2>
+            <div>
+              <h2 className="text-2xl font-bold">Weekly Plan - Phase {currentPhase.toUpperCase()}</h2>
+              <p className="text-slate-400 mt-2">Week {weeksInCurrentPhase} of 4 • Exercises auto-rotate to keep training fresh</p>
+            </div>
             <div className="grid gap-4">
-              {getWeekSchedule().map((schedule) => (
-                <div key={schedule.day} className={`bg-slate-800/50 rounded-xl p-6 border ${schedule.isToday ? 'border-blue-500' : 'border-slate-700'}`}>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="text-xl font-semibold">{schedule.day}{schedule.isToday && <span className="ml-3 text-sm bg-blue-600 px-2 py-1 rounded">Today</span>}</h3>
-                      <p className="text-slate-400 mt-1">{getWorkoutLabel(schedule.type)}</p>
+              {getWeekSchedule().map((schedule) => {
+                const dayWorkout = WORKOUT_TEMPLATES[schedule.type] || [];
+                return (
+                  <div key={schedule.day} className={`bg-slate-800/50 rounded-xl p-6 border ${schedule.isToday ? 'border-blue-500' : 'border-slate-700'}`}>
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-xl font-semibold">
+                          {schedule.day}
+                          {schedule.isToday && <span className="ml-3 text-sm bg-blue-600 px-2 py-1 rounded">Today</span>}
+                        </h3>
+                        <p className="text-slate-400 mt-1">{getWorkoutLabel(schedule.type)}</p>
+                      </div>
                     </div>
+                    
+                    {schedule.type !== 'rest' && (
+                      <div className="mt-4 space-y-2">
+                        <p className="text-sm font-semibold text-blue-400 mb-3">{dayWorkout.length} Exercises:</p>
+                        {dayWorkout.map((workout, idx) => {
+                          const exercise = getExerciseById(workout.exerciseId);
+                          if (!exercise) return null;
+                          return (
+                            <div key={idx} className="bg-slate-700/30 rounded-lg p-3 flex justify-between items-center">
+                              <div>
+                                <p className="font-medium text-sm">{exercise.name}</p>
+                                <p className="text-xs text-slate-400">{exercise.primary} • {exercise.equipment}</p>
+                              </div>
+                              <p className="text-sm text-slate-400">{workout.targetSets} × {workout.targetReps}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    
+                    {schedule.type === 'rest' && (
+                      <div className="mt-4 bg-slate-700/30 rounded-lg p-4 text-center">
+                        <p className="text-slate-400">Rest and recovery day</p>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
 
         {activeTab === 'progress' && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Your Progress</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">Your Progress</h2>
+              <button
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to clear all workout history? This cannot be undone.')) {
+                    setWorkoutHistory({});
+                    localStorage.removeItem('workoutHistory');
+                  }
+                }}
+                className="text-sm bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
+              >
+                Clear All Data
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                <p className="text-slate-400 text-sm mb-1">Total Sets Logged</p>
+                <p className="text-3xl font-bold text-blue-400">
+                  {Object.values(workoutHistory).reduce((total, history) => total + history.length, 0)}
+                </p>
+              </div>
+              <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                <p className="text-slate-400 text-sm mb-1">Exercises Tracked</p>
+                <p className="text-3xl font-bold text-green-400">
+                  {Object.keys(workoutHistory).length}
+                </p>
+              </div>
+              <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                <p className="text-slate-400 text-sm mb-1">This Week</p>
+                <p className="text-3xl font-bold text-purple-400">
+                  {Object.values(workoutHistory).reduce((total, history) => {
+                    const thisWeek = history.filter(entry => {
+                      const entryDate = new Date(entry.date);
+                      const weekAgo = new Date();
+                      weekAgo.setDate(weekAgo.getDate() - 7);
+                      return entryDate >= weekAgo;
+                    });
+                    return total + thisWeek.length;
+                  }, 0)} sets
+                </p>
+              </div>
+              <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                <p className="text-slate-400 text-sm mb-1">Current Phase</p>
+                <p className="text-3xl font-bold text-orange-400">
+                  {currentPhase.toUpperCase()} • W{weeksInCurrentPhase}
+                </p>
+              </div>
+            </div>
+
+            {todayWorkout.filter(w => getProgressData(w.exerciseId).length > 0).length === 0 && (
+              <div className="bg-slate-800/50 rounded-xl p-8 border border-slate-700 text-center">
+                <p className="text-slate-400">No workout data yet. Start logging your sets to track progress!</p>
+              </div>
+            )}
+            
             {todayWorkout.filter(w => getProgressData(w.exerciseId).length > 0).map(workout => {
               const exercise = getExerciseById(workout.exerciseId);
+              if (!exercise) return null;
               const data = getProgressData(workout.exerciseId);
+              const allHistory = workoutHistory[workout.exerciseId] || [];
+              const firstWeight = allHistory[0]?.weight || 0;
+              const lastWeight = allHistory[allHistory.length - 1]?.weight || 0;
+              const improvement = firstWeight > 0 ? ((lastWeight - firstWeight) / firstWeight * 100).toFixed(1) : 0;
+              
               return (
                 <div key={workout.exerciseId} className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-                  <h3 className="text-xl font-semibold mb-4">{exercise.name}</h3>
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold">{exercise.name}</h3>
+                      <p className="text-sm text-slate-400 mt-1">
+                        {allHistory.length} sets logged • 
+                        {improvement > 0 && <span className="text-green-400 ml-2">+{improvement}% strength gain</span>}
+                        {improvement < 0 && <span className="text-red-400 ml-2">{improvement}% change</span>}
+                      </p>
+                    </div>
+                  </div>
                   <ResponsiveContainer width="100%" height={250}>
                     <LineChart data={data}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
@@ -421,8 +940,19 @@ const App = () => {
                       <YAxis stroke="#94a3b8" />
                       <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155' }} />
                       <Line type="monotone" dataKey="weight" stroke="#60a5fa" strokeWidth={2} />
+                      <Line type="monotone" dataKey="volume" stroke="#34d399" strokeWidth={2} />
                     </LineChart>
                   </ResponsiveContainer>
+                  <div className="flex gap-6 mt-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
+                      <span className="text-slate-400">Weight (lbs)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                      <span className="text-slate-400">Volume (lbs × reps)</span>
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -431,8 +961,11 @@ const App = () => {
 
         {activeTab === 'library' && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Exercise Library</h2>
-            <p className="text-slate-400">Total Exercises: {getAllExercises().length}</p>
+            <div>
+              <h2 className="text-2xl font-bold">Exercise Library</h2>
+              <p className="text-slate-400 mt-1">Total Exercises: {getAllExercises().length}</p>
+              <p className="text-slate-500 text-sm mt-1">Exercises automatically rotate every 4 weeks to keep your training fresh</p>
+            </div>
             {Object.entries(EXERCISE_LIBRARY).map(([category, exercises]) => (
               <div key={category} className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
                 <h3 className="text-xl font-semibold capitalize mb-2 text-blue-400">{category} ({exercises.length} exercises)</h3>
@@ -444,6 +977,8 @@ const App = () => {
                         <span>{exercise.equipment}</span>
                         <span>•</span>
                         <span>{exercise.difficulty}</span>
+                        <span>•</span>
+                        <span className="text-blue-400">{exercise.primary}</span>
                       </div>
                     </button>
                   ))}
@@ -470,6 +1005,8 @@ const App = () => {
                       <span>{exercise.equipment}</span>
                       <span>•</span>
                       <span>{exercise.difficulty}</span>
+                      <span>•</span>
+                      <span className="text-blue-400">{exercise.primary}</span>
                     </div>
                   </button>
                 ))}
@@ -485,14 +1022,17 @@ const App = () => {
             <div className="p-6 border-b border-slate-700 flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <Zap className="w-6 h-6 text-blue-400" />
-                <h3 className="text-xl font-bold">AI Coach</h3>
+                <div>
+                  <h3 className="text-xl font-bold">AI Coach</h3>
+                  <p className="text-xs text-slate-400">Phase {currentPhase.toUpperCase()} • Week {weeksInCurrentPhase}</p>
+                </div>
               </div>
               <button onClick={() => setShowAIChat(false)} className="p-2 hover:bg-slate-700 rounded-lg"><X className="w-5 h-5" /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {aiMessages.length === 0 && (
                 <div className="text-center text-slate-400 mt-8">
-                  <p className="mb-4">Ask me about your workout!</p>
+                  <p className="mb-4">Ask me about your workout or training phase!</p>
                 </div>
               )}
               {aiMessages.map((msg, idx) => (
@@ -505,7 +1045,7 @@ const App = () => {
             </div>
             <div className="p-6 border-t border-slate-700">
               <div className="flex gap-3">
-                <input type="text" value={aiInput} onChange={(e) => setAiInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && sendAIMessage()} placeholder="Ask about form, weight, alternatives..." className="flex-1 bg-slate-700 rounded-lg px-4 py-3" />
+                <input type="text" value={aiInput} onChange={(e) => setAiInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && sendAIMessage()} placeholder="Ask about form, weight, phases..." className="flex-1 bg-slate-700 rounded-lg px-4 py-3" />
                 <button onClick={sendAIMessage} className="bg-blue-600 hover:bg-blue-700 rounded-lg px-6 py-3">Send</button>
               </div>
             </div>
@@ -550,4 +1090,3 @@ const App = () => {
 };
 
 export default App;
-
