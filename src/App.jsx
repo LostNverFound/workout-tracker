@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dumbbell, TrendingUp, Library, Calendar, Plus, Check, RefreshCw, Zap, MessageSquare, X, CalendarDays, RotateCcw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -176,10 +176,12 @@ const EXERCISE_LIBRARY = {
     { id: 370, name: 'Box Jumps', equipment: 'Box', difficulty: 'Intermediate', primary: 'Cardio', secondary: 'Legs, Power', description: 'Explosive power.' },
     { id: 371, name: 'Ski Erg', equipment: 'Machine', difficulty: 'Intermediate', primary: 'Cardio', secondary: 'Upper Body', description: 'Upper body conditioning.' },
     { id: 372, name: 'Kettlebell Swings', equipment: 'Kettlebell', difficulty: 'Intermediate', primary: 'Cardio', secondary: 'Glutes, Hamstrings', description: 'Power endurance.' },
+    { id: 373, name: 'HIIT Sprints', equipment: 'Track/Treadmill', difficulty: 'Advanced', primary: 'Cardio', secondary: 'Legs', description: '30s sprint, 90s rest intervals.' },
+    { id: 374, name: 'Jump Squats', equipment: 'Bodyweight', difficulty: 'Intermediate', primary: 'Cardio', secondary: 'Legs', description: 'Plyometric power.' },
   ],
 };
 
-// 4-week rotation system with templates A, B, C, D
+// 4-week rotation system - now includes cardio/HIIT on more days
 const WORKOUT_TEMPLATES = {
   push_aa: [
     { exerciseId: 1, targetSets: 4, targetReps: '6-8' },
@@ -204,6 +206,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 48, targetSets: 3, targetReps: '10-12' },
     { exerciseId: 53, targetSets: 3, targetReps: '20' },
     { exerciseId: 119, targetSets: 3, targetReps: '12 each' },
+    { exerciseId: 228, targetSets: 3, targetReps: '15 min HIIT' },
   ],
   push_ba: [
     { exerciseId: 303, targetSets: 4, targetReps: '10-12' },
@@ -228,6 +231,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 357, targetSets: 3, targetReps: '10-12' },
     { exerciseId: 215, targetSets: 3, targetReps: '12-15' },
     { exerciseId: 222, targetSets: 3, targetReps: '15 each' },
+    { exerciseId: 65, targetSets: 1, targetReps: '10 min' },
   ],
   push_ca: [
     { exerciseId: 309, targetSets: 4, targetReps: '8-10' },
@@ -252,6 +256,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 359, targetSets: 3, targetReps: '10-12' },
     { exerciseId: 220, targetSets: 3, targetReps: '12' },
     { exerciseId: 363, targetSets: 3, targetReps: '30s' },
+    { exerciseId: 374, targetSets: 3, targetReps: '12 min HIIT' },
   ],
   push_da: [
     { exerciseId: 306, targetSets: 4, targetReps: '12-15' },
@@ -276,6 +281,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 356, targetSets: 3, targetReps: '15' },
     { exerciseId: 223, targetSets: 3, targetReps: '15' },
     { exerciseId: 367, targetSets: 3, targetReps: '45s each' },
+    { exerciseId: 227, targetSets: 3, targetReps: '10 min' },
   ],
   pull_aa: [
     { exerciseId: 11, targetSets: 4, targetReps: '5-6' },
@@ -319,7 +325,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 18, targetSets: 4, targetReps: '15-20' },
     { exerciseId: 349, targetSets: 3, targetReps: '10-12' },
     { exerciseId: 350, targetSets: 3, targetReps: '12-15' },
-    { exerciseId: 62, targetSets: 1, targetReps: '20 min' },
+    { exerciseId: 373, targetSets: 1, targetReps: '20 min HIIT' },
   ],
   pull_ca: [
     { exerciseId: 12, targetSets: 4, targetReps: '8-12' },
@@ -375,6 +381,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 29, targetSets: 4, targetReps: '15-20' },
     { exerciseId: 54, targetSets: 3, targetReps: '20' },
     { exerciseId: 55, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 226, targetSets: 1, targetReps: '20 min' },
   ],
   legs_ab: [
     { exerciseId: 22, targetSets: 4, targetReps: '6-8' },
@@ -386,6 +393,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 335, targetSets: 4, targetReps: '15-20' },
     { exerciseId: 117, targetSets: 3, targetReps: '45s each' },
     { exerciseId: 118, targetSets: 3, targetReps: '30-45s' },
+    { exerciseId: 369, targetSets: 1, targetReps: '15 min HIIT' },
   ],
   legs_ba: [
     { exerciseId: 109, targetSets: 4, targetReps: '10-12' },
@@ -397,6 +405,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 336, targetSets: 4, targetReps: '15-20' },
     { exerciseId: 216, targetSets: 3, targetReps: '10-12' },
     { exerciseId: 220, targetSets: 3, targetReps: '12-15' },
+    { exerciseId: 62, targetSets: 1, targetReps: '20 min' },
   ],
   legs_bb: [
     { exerciseId: 324, targetSets: 4, targetReps: '6-8' },
@@ -408,6 +417,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 29, targetSets: 4, targetReps: '20-25' },
     { exerciseId: 364, targetSets: 3, targetReps: '30s each' },
     { exerciseId: 365, targetSets: 3, targetReps: '45s' },
+    { exerciseId: 120, targetSets: 1, targetReps: '12 min HIIT' },
   ],
   legs_ca: [
     { exerciseId: 21, targetSets: 4, targetReps: '8-10' },
@@ -419,6 +429,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 335, targetSets: 4, targetReps: '20' },
     { exerciseId: 59, targetSets: 3, targetReps: '15' },
     { exerciseId: 218, targetSets: 3, targetReps: '30s' },
+    { exerciseId: 66, targetSets: 1, targetReps: '25 min' },
   ],
   legs_cb: [
     { exerciseId: 22, targetSets: 4, targetReps: '8-10' },
@@ -430,6 +441,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 29, targetSets: 4, targetReps: '25' },
     { exerciseId: 366, targetSets: 3, targetReps: '15' },
     { exerciseId: 51, targetSets: 3, targetReps: '90s' },
+    { exerciseId: 370, targetSets: 1, targetReps: '15 min HIIT' },
   ],
   legs_da: [
     { exerciseId: 323, targetSets: 4, targetReps: '8-10' },
@@ -441,6 +453,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 336, targetSets: 4, targetReps: '20' },
     { exerciseId: 56, targetSets: 3, targetReps: '12' },
     { exerciseId: 367, targetSets: 3, targetReps: '60s each' },
+    { exerciseId: 63, targetSets: 1, targetReps: '20 min' },
   ],
   legs_db: [
     { exerciseId: 109, targetSets: 4, targetReps: '12-15' },
@@ -452,6 +465,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 335, targetSets: 4, targetReps: '25' },
     { exerciseId: 368, targetSets: 3, targetReps: '5 each' },
     { exerciseId: 219, targetSets: 3, targetReps: '20' },
+    { exerciseId: 64, targetSets: 1, targetReps: '20 min' },
   ],
   rest: [],
 };
@@ -526,7 +540,7 @@ const App = () => {
   const weeksInCurrentPhase = Math.floor((new Date() - new Date(trainingPhase.startDate)) / (1000 * 60 * 60 * 24 * 7)) % 4 + 1;
 
   // Save training phase when it changes
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('trainingPhase', JSON.stringify(trainingPhase));
   }, [trainingPhase]);
 
@@ -559,24 +573,32 @@ const App = () => {
 
   const currentDay = getDayOfWeek();
   const todayWorkoutType = getWorkoutType(currentDay);
+  
+  // Updated to better handle localStorage persistence
   const [todayWorkout, setTodayWorkout] = useState(() => {
     const saved = localStorage.getItem('todayWorkout');
     if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.day === currentDay && parsed.phase === currentPhase) {
-        return parsed.workout;
+      try {
+        const parsed = JSON.parse(saved);
+        // Only use saved workout if it matches current day AND phase
+        if (parsed.day === currentDay && parsed.phase === currentPhase) {
+          return parsed.workout;
+        }
+      } catch (e) {
+        console.error('Error parsing saved workout:', e);
       }
     }
+    // Otherwise, use template
     return WORKOUT_TEMPLATES[todayWorkoutType] || [];
   });
 
   // Save workout history to localStorage whenever it changes
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
   }, [workoutHistory]);
 
   // Save today's workout to localStorage whenever it changes
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('todayWorkout', JSON.stringify({
       day: currentDay,
       phase: currentPhase,
@@ -584,12 +606,31 @@ const App = () => {
     }));
   }, [todayWorkout, currentDay, currentPhase]);
 
-  // Update workout when phase changes
-  React.useEffect(() => {
-    const newWorkoutType = getWorkoutType(currentDay);
-    const newWorkout = WORKOUT_TEMPLATES[newWorkoutType] || [];
-    setTodayWorkout(newWorkout);
-  }, [currentPhase]);
+  // Update workout when phase or day changes
+  useEffect(() => {
+    const saved = localStorage.getItem('todayWorkout');
+    let shouldUpdate = false;
+    
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // If day or phase changed, load new workout
+        if (parsed.day !== currentDay || parsed.phase !== currentPhase) {
+          shouldUpdate = true;
+        }
+      } catch (e) {
+        shouldUpdate = true;
+      }
+    } else {
+      shouldUpdate = true;
+    }
+    
+    if (shouldUpdate) {
+      const newWorkoutType = getWorkoutType(currentDay);
+      const newWorkout = WORKOUT_TEMPLATES[newWorkoutType] || [];
+      setTodayWorkout(newWorkout);
+    }
+  }, [currentPhase, currentDay]);
 
   const getAllExercises = () => Object.values(EXERCISE_LIBRARY).flat();
   const getExerciseById = (id) => getAllExercises().find(ex => ex.id === id);
@@ -629,13 +670,17 @@ const App = () => {
     const lowerMsg = message.toLowerCase();
     const exercise = selectedExercise ? getExerciseById(selectedExercise) : null;
     
+    if (lowerMsg.includes('cardio') || lowerMsg.includes('hiit')) {
+      return `Cardio & HIIT in Your Program:\n\n**Current Setup:**\n• All PULL days include 15-20 min cardio\n• All LEG days include 20-25 min cardio\n• Some PUSH days include 10-15 min HIIT/cardio\n\n**HIIT Sessions:**\n• Tuesday/Friday: Rowing, Treadmill, or Cycling\n• Wednesday/Saturday: Stair climber, Incline walking, or HIIT sprints\n• Thursday (some phases): Burpees or Jump squats\n\n**How to Do HIIT:**\n• Sprint: 30 seconds max effort\n• Rest: 60-90 seconds easy pace\n• Repeat: 8-12 rounds\n• Total time: 12-20 minutes\n\n**Steady State Cardio:**\n• Moderate pace you can sustain\n• 60-70% max heart rate\n• Focus on endurance\n• Do AFTER your strength training\n\n**Benefits:**\n• Burns fat while preserving muscle\n• Improves cardiovascular health\n• Increases work capacity\n• Aids recovery between sets\n\nYou're already hitting 4-6 cardio sessions per week!`;
+    }
+    
     if (lowerMsg.includes('phase') || lowerMsg.includes('rotation') || lowerMsg.includes('cycle')) {
       return `Training Phase System:\n\n**Current Status:**\n• You're in Phase ${currentPhase.toUpperCase()}\n• Week ${weeksInCurrentPhase} of this phase\n• Phases rotate every 4 weeks automatically\n\n**How It Works:**\n• Phase A (Weeks 1-4): Foundation exercises\n• Phase B (Weeks 5-8): Variation for different angles\n• Phase C (Weeks 9-12): Advanced variations\n• Phase D (Weeks 13-16): Unique movements\n\n**Benefits:**\n• Prevents adaptation and plateaus\n• Keeps training interesting and fresh\n• Reduces overuse injury risk\n• Develops muscles from all angles\n• Automatic progression built-in\n\nAfter 16 weeks, the cycle repeats but you'll be stronger!`;
     }
     
     if (lowerMsg.includes('form') || lowerMsg.includes('technique') || lowerMsg.includes('how')) {
       if (exercise) {
-        return `Great question about ${exercise.name}!\n\nKey Form Points:\n• Keep your core tight and engaged\n• Control the weight - no swinging or momentum\n• Full range of motion for maximum muscle activation\n• Breathe properly: exhale on exertion, inhale on the way down\n• Start lighter to perfect form before adding weight\n\n${exercise.primary === 'Chest' ? '• Retract shoulder blades and keep them pinned\n• Keep elbows at about 45 degrees\n• Lower until you feel a stretch' : ''}\n${exercise.primary === 'Back' ? '• Pull with your back muscles, not your arms\n• Squeeze shoulder blades together at peak\n• Keep chest up and core braced' : ''}\n${exercise.primary === 'Shoulders' ? '• Keep core tight to protect lower back\n• Press straight up, not forward\n• Full lockout at the top' : ''}\n\nWant tips on a specific part of the movement?`;
+        return `Great question about ${exercise.name}!\n\nKey Form Points:\n• Keep your core tight and engaged\n• Control the weight - no swinging or momentum\n• Full range of motion for maximum muscle activation\n• Breathe properly: exhale on exertion, inhale on the way down\n• Start lighter to perfect form before adding weight\n\n${exercise.primary === 'Chest' ? '• Retract shoulder blades and keep them pinned\n• Keep elbows at about 45 degrees\n• Lower until you feel a stretch' : ''}\n${exercise.primary === 'Back' ? '• Pull with your back muscles, not your arms\n• Squeeze shoulder blades together at peak\n• Keep chest up and core braced' : ''}\n${exercise.primary === 'Shoulders' ? '• Keep core tight to protect lower back\n• Press straight up, not forward\n• Full lockout at the top' : ''}\n${exercise.primary === 'Cardio' ? '• Warm up for 3-5 minutes\n• Maintain proper form even when tired\n• Cool down for 3-5 minutes\n• Stay hydrated' : ''}\n\nWant tips on a specific part of the movement?`;
       }
       return 'Ask me about form for any exercise! Click the lightning bolt icon next to an exercise, then ask me about it.';
     }
@@ -653,14 +698,14 @@ const App = () => {
     }
     
     if (lowerMsg.includes('progress') || lowerMsg.includes('plateau') || lowerMsg.includes('stuck') || lowerMsg.includes('gain')) {
-      return `Breaking Through Plateaus:\n\n**Progressive Overload Strategies:**\n• Increase weight by 5-10% when you hit rep targets\n• Add 1-2 more reps per set\n• Add an extra set\n• Decrease rest time by 15-30 seconds\n• Slow down the eccentric (lowering) phase\n\n**Your Program Already Helps:**\n• Exercises rotate every 4 weeks automatically\n• This prevents adaptation and keeps progress coming\n• Different phases work muscles from new angles\n\n**Recovery & Nutrition:**\n• Get 7-9 hours of quality sleep\n• Eat 0.8-1g protein per pound of bodyweight\n• Stay in a slight caloric surplus for muscle gain\n• Take a deload week every 4-6 weeks (reduce weight by 40-50%)\n\nThe rotation system is designed to keep you progressing!`;
+      return `Breaking Through Plateaus:\n\n**Progressive Overload Strategies:**\n• Increase weight by 5-10% when you hit rep targets\n• Add 1-2 more reps per set\n• Add an extra set\n• Decrease rest time by 15-30 seconds\n• Slow down the eccentric (lowering) phase\n\n**Your Program Already Helps:**\n• Exercises rotate every 4 weeks automatically\n• This prevents adaptation and keeps progress coming\n• Different phases work muscles from new angles\n• Cardio improves work capacity\n\n**Recovery & Nutrition:**\n• Get 7-9 hours of quality sleep\n• Eat 0.8-1g protein per pound of bodyweight\n• Stay in a slight caloric surplus for muscle gain\n• Take a deload week every 4-6 weeks (reduce weight by 40-50%)\n\nThe rotation system is designed to keep you progressing!`;
     }
     
     if (lowerMsg.includes('split') || lowerMsg.includes('routine') || lowerMsg.includes('program') || lowerMsg.includes('schedule') || lowerMsg.includes('variety')) {
-      return `Your Advanced Program:\n\n**Push/Pull/Legs with 4-Week Rotation:**\n✅ Automatically changes exercises every 4 weeks!\n✅ Hits each muscle group twice per week\n✅ 4 different phases that rotate continuously\n✅ Over 200 exercises in the library\n\n**Weekly Split:**\n• Monday: Push (Chest, Shoulders, Triceps)\n• Tuesday: Pull (Back, Biceps)\n• Wednesday: Legs (Quads, Hamstrings, Glutes)\n• Thursday: Push (Different exercises)\n• Friday: Pull (Different exercises)\n• Saturday: Legs (Different exercises)\n• Sunday: Rest\n\n**Current Phase: ${currentPhase.toUpperCase()} (Week ${weeksInCurrentPhase})**\n\n**Why This Works:**\n• Prevents boredom and plateaus\n• Reduces overuse injuries\n• Develops complete muscle balance\n• Constant variety keeps you motivated\n• Automatic progression system\n\nYour exercises will rotate to Phase ${currentPhase === 'd' ? 'A' : String.fromCharCode(currentPhase.charCodeAt(0) + 1).toUpperCase()} in ${4 - weeksInCurrentPhase} week(s)!`;
+      return `Your Advanced Program:\n\n**Push/Pull/Legs with 4-Week Rotation:**\n✅ Automatically changes exercises every 4 weeks!\n✅ Hits each muscle group twice per week\n✅ 4 different phases that rotate continuously\n✅ Over 200 exercises in the library\n✅ Cardio/HIIT integrated 4-6 days per week!\n\n**Weekly Split:**\n• Monday: Push (Chest, Shoulders, Triceps)\n• Tuesday: Pull (Back, Biceps) + Cardio\n• Wednesday: Legs (Quads, Hamstrings, Glutes) + Cardio\n• Thursday: Push (Different exercises) + Optional HIIT\n• Friday: Pull (Different exercises) + Cardio\n• Saturday: Legs (Different exercises) + Cardio\n• Sunday: Rest\n\n**Current Phase: ${currentPhase.toUpperCase()} (Week ${weeksInCurrentPhase})**\n\n**Why This Works:**\n• Prevents boredom and plateaus\n• Reduces overuse injuries\n• Develops complete muscle balance\n• Cardio improves endurance & fat loss\n• Constant variety keeps you motivated\n• Automatic progression system\n\nYour exercises will rotate to Phase ${currentPhase === 'd' ? 'A' : String.fromCharCode(currentPhase.charCodeAt(0) + 1).toUpperCase()} in ${4 - weeksInCurrentPhase} week(s)!`;
     }
     
-    return `I'm your AI coach! I can help with:\n\n💪 Exercise Form & Technique\n🔄 Alternative Exercises\n⚖️ Weight Selection & Progression\n📊 Breaking Through Plateaus\n🏃 Cardio & Conditioning\n💊 Nutrition & Diet\n😴 Recovery & Sleep\n📅 Program Design\n🔁 Training Phase System\n🏋️ Muscle Building Tips\n\nJust ask me anything! Try:\n• "Tell me about the phase rotation"\n• "How much weight should I use?"\n• "What phase am I in?"\n• "Tips for bench press form?"`;
+    return `I'm your AI coach! I can help with:\n\n💪 Exercise Form & Technique\n🔄 Alternative Exercises\n⚖️ Weight Selection & Progression\n📊 Breaking Through Plateaus\n🏃 Cardio & HIIT Training\n💊 Nutrition & Diet\n😴 Recovery & Sleep\n📅 Program Design\n🔁 Training Phase System\n🏋️ Muscle Building Tips\n\nJust ask me anything! Try:\n• "Tell me about cardio in my program"\n• "How much weight should I use?"\n• "What phase am I in?"\n• "Tips for deadlift form?"`;
   };
 
   const sendAIMessage = () => {
@@ -678,8 +723,8 @@ const App = () => {
 
   const getWorkoutLabel = (type) => {
     if (type.startsWith('push')) return `Push (Phase ${currentPhase.toUpperCase()}) - Chest, Shoulders, Triceps`;
-    if (type.startsWith('pull')) return `Pull (Phase ${currentPhase.toUpperCase()}) - Back, Biceps`;
-    if (type.startsWith('legs')) return `Legs (Phase ${currentPhase.toUpperCase()}) - Quads, Hamstrings, Glutes`;
+    if (type.startsWith('pull')) return `Pull (Phase ${currentPhase.toUpperCase()}) - Back, Biceps + Cardio`;
+    if (type.startsWith('legs')) return `Legs (Phase ${currentPhase.toUpperCase()}) - Quads, Hamstrings, Glutes + Cardio`;
     return 'Rest Day';
   };
 
@@ -741,8 +786,8 @@ const App = () => {
                 </div>
                 <p className="text-slate-400 mt-1">
                   {getWorkoutDisplayType(todayWorkoutType) === 'push' && 'Chest, Shoulders, Triceps'}
-                  {getWorkoutDisplayType(todayWorkoutType) === 'pull' && 'Back, Biceps'}
-                  {getWorkoutDisplayType(todayWorkoutType) === 'legs' && 'Quads, Hamstrings, Glutes'}
+                  {getWorkoutDisplayType(todayWorkoutType) === 'pull' && 'Back, Biceps + Cardio'}
+                  {getWorkoutDisplayType(todayWorkoutType) === 'legs' && 'Quads, Hamstrings, Glutes + Cardio'}
                   {todayWorkoutType === 'rest' && 'Recovery day'}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">Exercises rotate in {4 - weeksInCurrentPhase} week(s)</p>
@@ -762,7 +807,7 @@ const App = () => {
             {todayWorkoutType === 'rest' ? (
               <div className="bg-slate-800/50 rounded-xl p-8 border border-slate-700 text-center">
                 <h3 className="text-xl font-semibold mb-4">Rest and Recovery</h3>
-                <p className="text-slate-400">Focus on recovery today!</p>
+                <p className="text-slate-400">Focus on recovery today! Light stretching or walking is fine.</p>
               </div>
             ) : (
               todayWorkout.map((workout, idx) => {
@@ -770,31 +815,43 @@ const App = () => {
                 if (!exercise) return null;
                 const history = workoutHistory[workout.exerciseId] || [];
                 const lastSession = history[history.length - 1];
+                const isCardio = exercise.primary === 'Cardio';
 
                 return (
-                  <div key={idx} className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                  <div key={idx} className={`bg-slate-800/50 rounded-xl p-6 border ${isCardio ? 'border-green-600/30 bg-green-900/10' : 'border-slate-700'}`}>
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-xl font-semibold text-blue-400">{exercise.name}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className={`text-xl font-semibold ${isCardio ? 'text-green-400' : 'text-blue-400'}`}>{exercise.name}</h3>
+                          {isCardio && <span className="bg-green-600/20 text-green-400 px-2 py-1 rounded text-xs font-semibold">CARDIO</span>}
+                        </div>
                         <div className="flex gap-4 text-sm text-slate-400 mt-1">
                           <span>{exercise.equipment}</span>
                           <span>•</span>
-                          <span>{workout.targetSets} sets x {workout.targetReps}</span>
+                          <span>{workout.targetSets} {isCardio ? 'session' : 'sets'} x {workout.targetReps}</span>
                           <span>•</span>
                           <span className="text-purple-400">{exercise.difficulty}</span>
                         </div>
-                        {lastSession && <div className="text-sm text-green-400 mt-1">Last: {lastSession.weight}lbs x {lastSession.reps}</div>}
+                        {lastSession && !isCardio && <div className="text-sm text-green-400 mt-1">Last: {lastSession.weight}lbs x {lastSession.reps}</div>}
                       </div>
                       <div className="flex gap-2">
                         <button onClick={() => { setSwapExerciseId(workout.exerciseId); setShowSwapModal(true); }} className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg"><RefreshCw className="w-5 h-5" /></button>
                         <button onClick={() => { setSelectedExercise(workout.exerciseId); setShowAIChat(true); }} className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg"><Zap className="w-5 h-5" /></button>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      {[...Array(workout.targetSets)].map((_, setIdx) => (
-                        <SetLogger key={setIdx} setNumber={setIdx + 1} onLog={(data) => logSet(workout.exerciseId, data)} previousWeight={lastSession?.weight} />
-                      ))}
-                    </div>
+                    {!isCardio && (
+                      <div className="space-y-2">
+                        {[...Array(workout.targetSets)].map((_, setIdx) => (
+                          <SetLogger key={setIdx} setNumber={setIdx + 1} onLog={(data) => logSet(workout.exerciseId, data)} previousWeight={lastSession?.weight} />
+                        ))}
+                      </div>
+                    )}
+                    {isCardio && (
+                      <div className="bg-slate-700/30 rounded-lg p-4 text-center">
+                        <p className="text-slate-300">{exercise.description}</p>
+                        <p className="text-sm text-slate-400 mt-2">Complete after your strength training</p>
+                      </div>
+                    )}
                   </div>
                 );
               })
@@ -806,19 +863,26 @@ const App = () => {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold">Weekly Plan - Phase {currentPhase.toUpperCase()}</h2>
-              <p className="text-slate-400 mt-2">Week {weeksInCurrentPhase} of 4 • Exercises auto-rotate to keep training fresh</p>
+              <p className="text-slate-400 mt-2">Week {weeksInCurrentPhase} of 4 • Exercises auto-rotate + Cardio/HIIT integrated</p>
             </div>
             <div className="grid gap-4">
               {getWeekSchedule().map((schedule) => {
                 const dayWorkout = WORKOUT_TEMPLATES[schedule.type] || [];
+                const hasCardio = dayWorkout.some(w => {
+                  const ex = getExerciseById(w.exerciseId);
+                  return ex && ex.primary === 'Cardio';
+                });
                 return (
                   <div key={schedule.day} className={`bg-slate-800/50 rounded-xl p-6 border ${schedule.isToday ? 'border-blue-500' : 'border-slate-700'}`}>
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-xl font-semibold">
-                          {schedule.day}
-                          {schedule.isToday && <span className="ml-3 text-sm bg-blue-600 px-2 py-1 rounded">Today</span>}
-                        </h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-xl font-semibold">
+                            {schedule.day}
+                            {schedule.isToday && <span className="ml-3 text-sm bg-blue-600 px-2 py-1 rounded">Today</span>}
+                          </h3>
+                          {hasCardio && <span className="bg-green-600/20 text-green-400 px-2 py-1 rounded text-xs font-semibold">+ CARDIO</span>}
+                        </div>
                         <p className="text-slate-400 mt-1">{getWorkoutLabel(schedule.type)}</p>
                       </div>
                     </div>
@@ -829,10 +893,11 @@ const App = () => {
                         {dayWorkout.map((workout, idx) => {
                           const exercise = getExerciseById(workout.exerciseId);
                           if (!exercise) return null;
+                          const isCardio = exercise.primary === 'Cardio';
                           return (
-                            <div key={idx} className="bg-slate-700/30 rounded-lg p-3 flex justify-between items-center">
+                            <div key={idx} className={`rounded-lg p-3 flex justify-between items-center ${isCardio ? 'bg-green-900/20 border border-green-600/30' : 'bg-slate-700/30'}`}>
                               <div>
-                                <p className="font-medium text-sm">{exercise.name}</p>
+                                <p className={`font-medium text-sm ${isCardio ? 'text-green-400' : ''}`}>{exercise.name}</p>
                                 <p className="text-xs text-slate-400">{exercise.primary} • {exercise.equipment}</p>
                               </div>
                               <p className="text-sm text-slate-400">{workout.targetSets} × {workout.targetReps}</p>
@@ -906,13 +971,19 @@ const App = () => {
               </div>
             </div>
 
-            {todayWorkout.filter(w => getProgressData(w.exerciseId).length > 0).length === 0 && (
+            {todayWorkout.filter(w => {
+              const ex = getExerciseById(w.exerciseId);
+              return ex && ex.primary !== 'Cardio' && getProgressData(w.exerciseId).length > 0;
+            }).length === 0 && (
               <div className="bg-slate-800/50 rounded-xl p-8 border border-slate-700 text-center">
                 <p className="text-slate-400">No workout data yet. Start logging your sets to track progress!</p>
               </div>
             )}
             
-            {todayWorkout.filter(w => getProgressData(w.exerciseId).length > 0).map(workout => {
+            {todayWorkout.filter(w => {
+              const ex = getExerciseById(w.exerciseId);
+              return ex && ex.primary !== 'Cardio' && getProgressData(w.exerciseId).length > 0;
+            }).map(workout => {
               const exercise = getExerciseById(workout.exerciseId);
               if (!exercise) return null;
               const data = getProgressData(workout.exerciseId);
@@ -964,7 +1035,7 @@ const App = () => {
             <div>
               <h2 className="text-2xl font-bold">Exercise Library</h2>
               <p className="text-slate-400 mt-1">Total Exercises: {getAllExercises().length}</p>
-              <p className="text-slate-500 text-sm mt-1">Exercises automatically rotate every 4 weeks to keep your training fresh</p>
+              <p className="text-slate-500 text-sm mt-1">Exercises automatically rotate every 4 weeks + Cardio/HIIT integrated</p>
             </div>
             {Object.entries(EXERCISE_LIBRARY).map(([category, exercises]) => (
               <div key={category} className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
@@ -1045,7 +1116,7 @@ const App = () => {
             </div>
             <div className="p-6 border-t border-slate-700">
               <div className="flex gap-3">
-                <input type="text" value={aiInput} onChange={(e) => setAiInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && sendAIMessage()} placeholder="Ask about form, weight, phases..." className="flex-1 bg-slate-700 rounded-lg px-4 py-3" />
+                <input type="text" value={aiInput} onChange={(e) => setAiInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && sendAIMessage()} placeholder="Ask about form, weight, cardio, phases..." className="flex-1 bg-slate-700 rounded-lg px-4 py-3" />
                 <button onClick={sendAIMessage} className="bg-blue-600 hover:bg-blue-700 rounded-lg px-6 py-3">Send</button>
               </div>
             </div>
