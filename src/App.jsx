@@ -652,11 +652,22 @@ Jake's program: Push/Pull/Legs/Upper/Lower lifting split + half marathon trainin
 Keep responses concise, helpful, and encouraging. You know Jake's full training context.`;
 
     try {
+      const apiKey = import.meta.env.VITE_ANTHROPIC_KEY;
+      if (!apiKey) {
+        setAiMessages(prev => [...prev, { role: "ai", text: "⚠️ API key not configured. Add VITE_ANTHROPIC_KEY to your Vercel environment variables and redeploy." }]);
+        setAiLoading(false);
+        return;
+      }
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true",
+        },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-haiku-4-5-20251001",
           max_tokens: 1000,
           system: systemPrompt,
           messages: [
@@ -668,8 +679,8 @@ Keep responses concise, helpful, and encouraging. You know Jake's full training 
       const data = await res.json();
       const text = data.content?.[0]?.text || "Sorry, I couldn't get a response.";
       setAiMessages(prev => [...prev, { role: "ai", text }]);
-    } catch {
-      setAiMessages(prev => [...prev, { role: "ai", text: "Connection issue — try again!" }]);
+    } catch (err) {
+      setAiMessages(prev => [...prev, { role: "ai", text: "Connection issue — check your API key in Vercel environment variables." }]);
     }
     setAiLoading(false);
     setTimeout(() => aiRef.current?.scrollTo({ top: 9999, behavior: "smooth" }), 100);
