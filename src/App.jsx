@@ -35,13 +35,13 @@ function getDayOfWeek() {
 // WEEKLY SCHEDULE (day index 1=Mon ... 6=Sat)
 // ─────────────────────────────────────────────
 const SCHEDULE = {
-  1: { type: "lift", label: "Push Day", icon: "💪", color: "#3b82f6", description: "Chest / Shoulders / Triceps + Abs" },
-  2: { type: "lift+run", label: "Pull + Easy Run", icon: "🏃", color: "#8b5cf6", description: "Back / Biceps + Easy afternoon run" },
-  3: { type: "run", label: "Tempo Run", icon: "⚡", color: "#f59e0b", description: "Moderate tempo run — no lifting" },
-  4: { type: "lift", label: "Upper Day", icon: "🔥", color: "#ef4444", description: "Strength-focused upper body + Abs" },
-  5: { type: "run", label: "Easy Run", icon: "🌿", color: "#22c55e", description: "Easy recovery run — no lifting" },
-  6: { type: "lift+run", label: "Legs + Long Run", icon: "🦵", color: "#f97316", description: "Long run (morning first!) then modified legs" },
-  0: { type: "rest", label: "Rest Day", icon: "😴", color: "#6b7280", description: "Full rest or light stretching" },
+  1: { type: "lift",     label: "Push Day",              icon: "💪", color: "#3b82f6", description: "Chest / Shoulders / Triceps + Abs" },
+  2: { type: "lift+run", label: "Pull + Easy Run",        icon: "🏃", color: "#8b5cf6", description: "Back / Biceps + Abs + Easy afternoon run" },
+  3: { type: "lift+run", label: "Legs A + Tempo Run",     icon: "🦵", color: "#f59e0b", description: "Legs A in the morning, tempo run in the afternoon" },
+  4: { type: "lift",     label: "Upper Day",              icon: "🔥", color: "#ef4444", description: "Strength-focused upper body + Abs" },
+  5: { type: "run",      label: "Easy Run",               icon: "🌿", color: "#22c55e", description: "Easy recovery run only — rest your legs for Saturday" },
+  6: { type: "lift+run", label: "Legs B + Long Run (Optional)", icon: "⚡", color: "#f97316", description: "Optional day — long run first, then Legs B if you have it in you" },
+  0: { type: "rest",     label: "Rest Day",               icon: "😴", color: "#6b7280", description: "Full rest or light stretching" },
 };
 
 // ─────────────────────────────────────────────
@@ -242,7 +242,7 @@ const LIFT_SCHEDULES = {
     label: "Legs A — Quad / Hamstring / Glute / Calf",
     warmup: "5 min bike",
     cardioFinisher: "10 min Stairmaster at uncomfortable-but-sustainable pace",
-    note: "⚠️ On long run weeks: cut to 3x8, skip calf burnout, skip cardio finisher",
+    note: "⚠️ Tempo run is this afternoon — skip the cardio finisher and save your legs for the run.",
     groups: [
       {
         label: "Main Lifts",
@@ -343,6 +343,7 @@ const LIFT_SCHEDULES = {
 function getLiftForDay(dow) {
   if (dow === 1) return LIFT_SCHEDULES.push;
   if (dow === 2) return LIFT_SCHEDULES.pull;
+  if (dow === 3) return LIFT_SCHEDULES.legsA;
   if (dow === 4) return LIFT_SCHEDULES.upper;
   if (dow === 6) return LIFT_SCHEDULES.legsB;
   return null;
@@ -754,10 +755,10 @@ Keep responses concise, helpful, and encouraging. You know Jake's full training 
           {todayRunGoal && todayRunGoal !== "REST" && (
             <div style={{ ...S.card, borderColor: "#1e3a2f" }}>
               <div style={S.sectionTitle}>🏃 Run — {todayRunGoal}</div>
-              {dow === 6 && <div style={{ background: "#451a03", border: "1px solid #78350f", borderRadius: 10, padding: 12, marginBottom: 14, color: "#fbbf24", fontSize: 13 }}>⚠️ Run first this morning before lifting. Your legs will thank you.</div>}
-              {dow === 3 && <div style={{ color: "#94a3b8", fontSize: 13, marginBottom: 12 }}>Tempo run: easy 1 mile warm-up → tempo pace middle miles → easy 1 mile cool-down. <strong style={{ color: "#f59e0b" }}>No lifting today.</strong></div>}
-              {dow === 2 && <div style={{ color: "#94a3b8", fontSize: 13, marginBottom: 12 }}>Easy afternoon run after your pull session. Keep it conversational pace.</div>}
-              {dow === 5 && <div style={{ color: "#94a3b8", fontSize: 13, marginBottom: 12 }}>Easy recovery run. No lifting today. Keep your heart rate low and enjoy it.</div>}
+              {dow === 6 && <div style={{ background: "#451a03", border: "1px solid #78350f", borderRadius: 10, padding: 12, marginBottom: 14, color: "#fbbf24", fontSize: 13 }}>⚠️ Optional day — run first this morning before lifting. Skip lifting entirely if you need full recovery.</div>}
+              {dow === 3 && <div style={{ color: "#94a3b8", fontSize: 13, marginBottom: 12 }}>Tempo run in the afternoon after Legs A. Easy 1 mile warm-up → tempo pace middle miles → easy 1 mile cool-down. You'll be tired — that's the point.</div>}
+              {dow === 2 && <div style={{ color: "#94a3b8", fontSize: 13, marginBottom: 12 }}>Easy afternoon run after your pull session. Keep it conversational — you should be able to hold a full conversation.</div>}
+              {dow === 5 && <div style={{ color: "#94a3b8", fontSize: 13, marginBottom: 12 }}>Easy recovery run only today. No lifting — save your legs for Saturday's long run.</div>}
               <RunLogger runGoal={todayRunGoal} onLogRun={logRun} />
             </div>
           )}
@@ -770,7 +771,7 @@ Keep responses concise, helpful, and encouraging. You know Jake's full training 
                 <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
                   <span style={S.badge("#3b82f6")}>🔥 Warm-up: {liftPlan.warmup}</span>
                   {week >= 12 && <span style={S.badge("#a855f7")}>⚡ TAPER WEEK — reduce volume 30%</span>}
-                  {liftPlan.note && dow === 6 && <span style={S.badge("#f59e0b")}>{liftPlan.note}</span>}
+                  {liftPlan.note && (dow === 6 || dow === 3) && <span style={S.badge("#f59e0b")}>{liftPlan.note}</span>}
                 </div>
               </div>
 
@@ -817,7 +818,7 @@ Keep responses concise, helpful, and encouraging. You know Jake's full training 
               })}
 
               {/* Cardio Finisher */}
-              {liftPlan.cardioFinisher && !(dow === 6) && (
+              {liftPlan.cardioFinisher && !(dow === 6) && !(dow === 3) && (
                 <div style={{ ...S.card, background: "#1a0a0a", borderColor: "#7f1d1d33" }}>
                   <div style={S.sectionTitle}>⚡ Cardio Finisher</div>
                   <div style={{ color: "#fca5a5", fontSize: 14 }}>{liftPlan.cardioFinisher}</div>
