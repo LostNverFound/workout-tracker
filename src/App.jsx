@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dumbbell, TrendingUp, Library, Calendar, Plus, Check, RefreshCw, Zap, MessageSquare, X, CalendarDays, Activity, Heart, Moon, Thermometer, Footprints, Flame, Target, AlertCircle } from 'lucide-react';
+import { Dumbbell, TrendingUp, Library, Calendar, Plus, Check, RefreshCw, Zap, MessageSquare, X, CalendarDays, Activity, Heart, Moon, Thermometer, Footprints, Flame, Target, AlertCircle, Edit2, History, ChevronDown } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const MILESTONE_DATE = new Date('2025-11-14');
@@ -102,9 +102,8 @@ const EXERCISE_LIBRARY = {
   ],
 };
 
-// HARDCORE 6-DAY TRANSFORMATION SPLIT - HIGH VOLUME
 const WORKOUT_TEMPLATES = {
-  monday: [ // CHEST + SHOULDERS + TRICEPS + ABS (Power Day)
+  monday: [ 
     { exerciseId: 1, targetSets: 5, targetReps: '5-6', note: 'HEAVY' },
     { exerciseId: 2, targetSets: 4, targetReps: '6-8' },
     { exerciseId: 4, targetSets: 4, targetReps: '8-10' },
@@ -123,7 +122,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 73, targetSets: 3, targetReps: '60s' },
     { exerciseId: 74, targetSets: 3, targetReps: '20 each' },
   ],
-  tuesday: [ // BACK + BICEPS + REAR DELTS + ABS + CARDIO
+  tuesday: [ 
     { exerciseId: 11, targetSets: 5, targetReps: '5-6', note: 'HEAVY' },
     { exerciseId: 12, targetSets: 4, targetReps: '6-10' },
     { exerciseId: 13, targetSets: 4, targetReps: '8-10' },
@@ -143,7 +142,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 82, targetSets: 3, targetReps: '45s each' },
     { exerciseId: 102, targetSets: 1, targetReps: '20 min', isCardio: true },
   ],
-  wednesday: [ // LEGS (QUADS/HAMS/GLUTES) + CALVES + ABS
+  wednesday: [ 
     { exerciseId: 21, targetSets: 5, targetReps: '6-8', note: 'HEAVY' },
     { exerciseId: 22, targetSets: 4, targetReps: '8-10' },
     { exerciseId: 23, targetSets: 5, targetReps: '8-10', note: 'HEAVY' },
@@ -160,7 +159,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 78, targetSets: 3, targetReps: '30s' },
     { exerciseId: 81, targetSets: 3, targetReps: '15' },
   ],
-  thursday: [ // CHEST + ARMS + ABS + HIIT (Volume/Pump Day)
+  thursday: [ 
     { exerciseId: 3, targetSets: 4, targetReps: '10-12' },
     { exerciseId: 4, targetSets: 4, targetReps: '10-12' },
     { exerciseId: 5, targetSets: 4, targetReps: '12-15' },
@@ -180,7 +179,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 82, targetSets: 3, targetReps: '60s each' },
     { exerciseId: 104, targetSets: 1, targetReps: '12 min HIIT', isCardio: true },
   ],
-  friday: [ // BACK + SHOULDERS + TRAPS + ABS + CARDIO
+  friday: [ 
     { exerciseId: 12, targetSets: 4, targetReps: '8-12' },
     { exerciseId: 20, targetSets: 4, targetReps: '8-12' },
     { exerciseId: 13, targetSets: 4, targetReps: '10-12' },
@@ -200,7 +199,7 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 75, targetSets: 3, targetReps: '30' },
     { exerciseId: 103, targetSets: 1, targetReps: '20 min', isCardio: true },
   ],
-  saturday: [ // LEGS (Volume) + CALVES + ABS + CARDIO
+  saturday: [ 
     { exerciseId: 24, targetSets: 5, targetReps: '12-15', note: 'VOLUME' },
     { exerciseId: 30, targetSets: 4, targetReps: '12-15' },
     { exerciseId: 31, targetSets: 4, targetReps: '15-20' },
@@ -217,21 +216,42 @@ const WORKOUT_TEMPLATES = {
     { exerciseId: 78, targetSets: 3, targetReps: '45s' },
     { exerciseId: 105, targetSets: 1, targetReps: '30 min', isCardio: true },
   ],
-  sunday: [], // REST DAY
+  sunday: [],
 };
 
-const SetLogger = ({ setNumber, onLog, previousWeight, previousReps, loggedData }) => {
-  const [weight, setWeight] = useState(loggedData?.weight?.toString() || previousWeight || '');
+const SetLogger = ({ setNumber, onLog, onEdit, loggedData }) => {
+  const [weight, setWeight] = useState(loggedData?.weight?.toString() || '');
   const [reps, setReps] = useState(loggedData?.reps?.toString() || '');
-  const [logged, setLogged] = useState(!!loggedData);
+  const [isEditing, setIsEditing] = useState(!loggedData);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleLog = () => {
+  const handleSave = () => {
     if (weight && reps) {
-      onLog({ weight: parseFloat(weight), reps: parseInt(reps) });
-      setLogged(true);
-      setTimeout(() => setLogged(false), 1500);
+      if (loggedData) {
+        onEdit({ weight: parseFloat(weight), reps: parseInt(reps) });
+      } else {
+        onLog({ weight: parseFloat(weight), reps: parseInt(reps) });
+      }
+      setIsEditing(false);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 1500);
     }
   };
+
+  if (!isEditing && loggedData) {
+    return (
+      <div className="flex items-center gap-3 bg-green-900/20 border border-green-600/30 rounded-lg p-3">
+        <span className="text-slate-400 w-16">Set {setNumber}</span>
+        <span className="text-white font-medium">{loggedData.weight} lbs × {loggedData.reps} reps</span>
+        <button 
+          onClick={() => setIsEditing(true)}
+          className="ml-auto p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+        >
+          <Edit2 className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-3 bg-slate-700/30 rounded-lg p-3">
@@ -257,10 +277,10 @@ const SetLogger = ({ setNumber, onLog, previousWeight, previousReps, loggedData 
       />
       <span className="text-slate-400">reps</span>
       <button 
-        onClick={handleLog} 
-        className={`ml-auto p-2 rounded-lg transition-all ${logged ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700'}`}
+        onClick={handleSave} 
+        className={`ml-auto p-2 rounded-lg transition-all ${showSuccess ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700'}`}
       >
-        {logged ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+        {showSuccess ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
       </button>
     </div>
   );
@@ -268,11 +288,19 @@ const SetLogger = ({ setNumber, onLog, previousWeight, previousReps, loggedData 
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('today');
+  const [selectedDay, setSelectedDay] = useState(null); // null means use current day
+  const [showDaySelector, setShowDaySelector] = useState(false);
   const [healthData, setHealthData] = useState(null);
-  const [loadingHealth, setLoadingHealth] = useState(true);
+  const [lastHealthUpdate, setLastHealthUpdate] = useState(null);
+  const [refreshingHealth, setRefreshingHealth] = useState(false);
   
   const [workoutHistory, setWorkoutHistory] = useState(() => {
     const saved = localStorage.getItem('workoutHistory');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const [completedWorkouts, setCompletedWorkouts] = useState(() => {
+    const saved = localStorage.getItem('completedWorkouts');
     return saved ? JSON.parse(saved) : {};
   });
   
@@ -289,13 +317,8 @@ const App = () => {
   const [aiMessages, setAiMessages] = useState([]);
   const [aiInput, setAiInput] = useState('');
   const [selectedLibraryExercise, setSelectedLibraryExercise] = useState(null);
-
-  const getDaysUntilMilestone = () => {
-    const today = new Date();
-    const diffTime = MILESTONE_DATE - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [historyFilter, setHistoryFilter] = useState('all');
 
   const getDayOfWeek = () => {
     const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -303,35 +326,50 @@ const App = () => {
   };
 
   const currentDay = getDayOfWeek();
-  const todayWorkout = WORKOUT_TEMPLATES[currentDay] || [];
-  const daysUntilMilestone = getDaysUntilMilestone();
+  const displayDay = selectedDay || currentDay;
+  const todayWorkout = WORKOUT_TEMPLATES[displayDay] || [];
+
+  // Fetch health data
+  const fetchHealthData = async () => {
+    setRefreshingHealth(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setHealthData({
+        weight: { current: 152, trend: 'stable' },
+        sleep: { hours: 7.5, quality: 'good' },
+        hrv: { value: 65, status: 'good' },
+        restingHR: { value: 58, status: 'excellent' },
+        readiness: { score: 85, status: 'ready' },
+        steps: { today: 8432, goal: 10000 },
+        activeCalories: { today: 450, goal: 500 },
+        bodyTemp: { value: 98.2, deviation: 0.1 }
+      });
+      setLastHealthUpdate(new Date());
+    } catch (error) {
+      console.error('Error fetching health data:', error);
+    } finally {
+      setRefreshingHealth(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchHealthData = async () => {
-      try {
-        setHealthData({
-          weight: { current: 152, trend: 'stable' },
-          sleep: { hours: 7.5, quality: 'good' },
-          hrv: { value: 65, status: 'good' },
-          restingHR: { value: 58, status: 'excellent' },
-          readiness: { score: 85, status: 'ready' },
-          steps: { today: 8432, goal: 10000 },
-          activeCalories: { today: 450, goal: 500 },
-          bodyTemp: { value: 98.2, deviation: 0.1 }
-        });
-        setLoadingHealth(false);
-      } catch (error) {
-        console.error('Error fetching health data:', error);
-        setLoadingHealth(false);
-      }
-    };
-
     fetchHealthData();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchHealthData();
+    }, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
   }, [workoutHistory]);
+
+  useEffect(() => {
+    localStorage.setItem('completedWorkouts', JSON.stringify(completedWorkouts));
+  }, [completedWorkouts]);
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
@@ -355,7 +393,7 @@ const App = () => {
     const history = workoutHistory[exerciseId] || [];
     setWorkoutHistory({ 
       ...workoutHistory, 
-      [exerciseId]: [...history, { ...setData, date, setNumber }] 
+      [exerciseId]: [...history, { ...setData, date, setNumber, timestamp: new Date().toISOString() }] 
     });
     
     const key = `${exerciseId}_${setNumber}`;
@@ -363,6 +401,52 @@ const App = () => {
       ...todayLoggedSets,
       [key]: setData
     });
+  };
+
+  const editSet = (exerciseId, setNumber, setData) => {
+    const date = new Date().toISOString().split('T')[0];
+    const history = workoutHistory[exerciseId] || [];
+    
+    // Find and update the most recent entry for this set
+    const updatedHistory = [...history];
+    for (let i = updatedHistory.length - 1; i >= 0; i--) {
+      if (updatedHistory[i].date === date && updatedHistory[i].setNumber === setNumber) {
+        updatedHistory[i] = { ...setData, date, setNumber, timestamp: new Date().toISOString() };
+        break;
+      }
+    }
+    
+    setWorkoutHistory({ 
+      ...workoutHistory, 
+      [exerciseId]: updatedHistory
+    });
+    
+    const key = `${exerciseId}_${setNumber}`;
+    setTodayLoggedSets({
+      ...todayLoggedSets,
+      [key]: setData
+    });
+  };
+
+  const completeWorkout = () => {
+    const date = new Date().toISOString().split('T')[0];
+    const loggedCount = Object.keys(todayLoggedSets).length;
+    
+    if (loggedCount === 0) {
+      alert('Log at least one set before completing the workout!');
+      return;
+    }
+    
+    setCompletedWorkouts({
+      ...completedWorkouts,
+      [date]: {
+        day: displayDay,
+        totalSets: loggedCount,
+        completedAt: new Date().toISOString()
+      }
+    });
+    
+    alert(`Workout completed! ${loggedCount} sets logged for ${displayDay}.`);
   };
 
   const getSimilarExercises = (exerciseId) => {
@@ -375,54 +459,29 @@ const App = () => {
 
   const getTrainingRecommendation = () => {
     if (!healthData) return null;
-    
     const { readiness } = healthData;
-    
     if (readiness.score >= 85) {
-      return {
-        type: 'optimal',
-        message: 'Perfect day for heavy training! Go for PRs today.',
-        icon: '💪',
-        color: 'text-green-400'
-      };
+      return { type: 'optimal', message: 'Perfect day for heavy training! Go for PRs.', icon: '💪', color: 'text-green-400', show: false };
     } else if (readiness.score >= 70) {
-      return {
-        type: 'good',
-        message: 'Good recovery. Train as planned, push hard.',
-        icon: '👍',
-        color: 'text-blue-400'
-      };
+      return { type: 'good', message: 'Good recovery. Train as planned.', icon: '👍', color: 'text-blue-400', show: false };
     } else if (readiness.score >= 50) {
-      return {
-        type: 'moderate',
-        message: 'Moderate recovery. Reduce volume by 20% or go lighter.',
-        icon: '⚠️',
-        color: 'text-yellow-400'
-      };
+      return { type: 'moderate', message: 'Moderate recovery. Consider reducing volume 20%.', icon: '⚠️', color: 'text-yellow-400', show: true };
     } else {
-      return {
-        type: 'low',
-        message: 'Low recovery. Active recovery or rest recommended.',
-        icon: '🛑',
-        color: 'text-red-400'
-      };
+      return { type: 'low', message: 'Low recovery detected. Consider rest or active recovery.', icon: '🛑', color: 'text-red-400', show: true };
     }
   };
 
   const getAIResponse = (message) => {
     const lowerMsg = message.toLowerCase();
     const recommendation = getTrainingRecommendation();
-    
     if (lowerMsg.includes('transform') || lowerMsg.includes('jacked') || lowerMsg.includes('program')) {
-      return `Hardcore Transformation Program:\n\n**Your Split (6 Days):**\n• Mon: Chest+Shoulders+Triceps+Abs (17 exercises!)\n• Tue: Back+Biceps+Rear Delts+Abs+Cardio (18 exercises!)\n• Wed: Legs+Calves+Abs (15 exercises!)\n• Thu: Chest+Arms+Abs+HIIT (17 exercises!)\n• Fri: Back+Shoulders+Traps+Abs+Cardio (17 exercises!)\n• Sat: Legs Volume+Calves+Abs+Cardio (15 exercises!)\n• Sun: REST\n\n**Volume:**\n• 20-30 sets per workout\n• ABS EVERY DAY (4 exercises, 12-16 sets)\n• CARDIO 3x/week (20-30 min)\n• 100+ total sets per week\n\n**Strategy:**\n• Months 1-3.5: BULK (+500 cal, heavy weights)\n• Months 4-5.5: CUT (-300 cal, maintain strength)\n• Progressive overload EVERY week\n• Track everything religiously\n\n**This will transform you!**`;
+      return `Hardcore Transformation Program:\n\n**Your Split (6 Days):**\n• Mon: Chest+Shoulders+Triceps+Abs (17 exercises!)\n• Tue: Back+Biceps+Rear Delts+Abs+Cardio (18 exercises!)\n• Wed: Legs+Calves+Abs (15 exercises!)\n• Thu: Chest+Arms+Abs+HIIT (17 exercises!)\n• Fri: Back+Shoulders+Traps+Abs+Cardio (17 exercises!)\n• Sat: Legs Volume+Calves+Abs+Cardio (15 exercises!)\n• Sun: REST\n\n**Volume:**\n• 20-30 sets per workout\n• ABS EVERY DAY (4 exercises, 12-16 sets)\n• CARDIO 3x/week (20-30 min)\n• 100+ total sets per week\n\n**This will transform you!**`;
     }
-    
     if (lowerMsg.includes('recovery') || lowerMsg.includes('readiness')) {
       if (!healthData) return 'Connect Apple Health for recovery insights!';
-      return `Recovery Status:\n\n${recommendation.icon} ${recommendation.message}\n\n**Metrics:**\n• Readiness: ${healthData.readiness.score}%\n• HRV: ${healthData.hrv.value}ms\n• Sleep: ${healthData.sleep.hours}hrs\n• Resting HR: ${healthData.restingHR.value}bpm\n\n**Action:**\n${healthData.readiness.score >= 85 ? 'GO HEAVY! Perfect time for PRs.' : ''}\n${healthData.readiness.score >= 70 && healthData.readiness.score < 85 ? 'Train hard but don\'t max out.' : ''}\n${healthData.readiness.score < 70 ? 'Reduce intensity or take extra rest.' : ''}`;
+      return `Recovery Status:\n\n${recommendation.icon} ${recommendation.message}\n\n**Metrics:**\n• Readiness: ${healthData.readiness.score}%\n• HRV: ${healthData.hrv.value}ms\n• Sleep: ${healthData.sleep.hours}hrs\n• Resting HR: ${healthData.restingHR.value}bpm`;
     }
-    
-    return `AI Coach:\n\n💪 Transformation Strategy\n📊 Recovery Analysis\n🎯 Progressive Overload\n🔥 Nutrition Guidance\n\n${healthData ? `Today: ${recommendation.icon} ${recommendation.message}` : 'Connect Apple Health!'}\n\nAsk me:\n• "How's my recovery?"\n• "Tell me about the program"\n• "Nutrition tips?"`;
+    return `AI Coach:\n\n💪 Transformation Strategy\n📊 Recovery Analysis\n🎯 Progressive Overload\n🔥 Nutrition Guidance\n\n${healthData ? `Today: ${recommendation.icon} ${recommendation.message}` : 'Connect Apple Health!'}\n\nAsk me anything!`;
   };
 
   const sendAIMessage = () => {
@@ -446,14 +505,45 @@ const App = () => {
     return labels[day] || '';
   };
 
-  const recommendation = getTrainingRecommendation();
+  const getDayName = (day) => day.charAt(0).toUpperCase() + day.slice(1);
 
+  const getAllHistoricalData = () => {
+    const allData = [];
+    Object.entries(workoutHistory).forEach(([exerciseId, history]) => {
+      const exercise = getExerciseById(parseInt(exerciseId));
+      history.forEach(entry => {
+        allData.push({
+          ...entry,
+          exerciseId: parseInt(exerciseId),
+          exerciseName: exercise?.name || 'Unknown',
+          primary: exercise?.primary || 'Unknown'
+        });
+      });
+    });
+    return allData.sort((a, b) => new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date));
+  };
+
+  const getTimeSinceUpdate = () => {
+    if (!lastHealthUpdate) return '';
+    const now = new Date();
+    const diff = Math.floor((now - lastHealthUpdate) / 1000 / 60);
+    if (diff < 1) return 'Just now';
+    if (diff === 1) return '1 min ago';
+    if (diff < 60) return `${diff} mins ago`;
+    const hours = Math.floor(diff / 60);
+    if (hours === 1) return '1 hour ago';
+    return `${hours} hours ago`;
+  };
+
+  const recommendation = getTrainingRecommendation();
   const totalSetsToday = todayWorkout.length;
   const absExercises = todayWorkout.filter(w => {
     const ex = getExerciseById(w.exerciseId);
     return ex && ex.primary === 'Abs';
   }).length;
   const cardioExercises = todayWorkout.filter(w => w.isCardio).length;
+
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -468,102 +558,9 @@ const App = () => {
           </div>
           <div className="text-right">
             <div className="text-sm text-slate-400">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
-            {healthData && recommendation && (
-              <div className={`text-xs font-semibold mt-1 ${recommendation.color}`}>
-                {recommendation.icon} {recommendation.type.toUpperCase()}
-              </div>
-            )}
           </div>
         </div>
       </div>
-
-      {healthData && activeTab === 'today' && (
-        <div className="bg-slate-800/30 border-b border-slate-700 px-6 py-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
-              <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                <div className="flex items-center gap-2 mb-1">
-                  <Target className="w-4 h-4 text-blue-400" />
-                  <span className="text-xs text-slate-400">Weight</span>
-                </div>
-                <p className="text-lg font-bold">{healthData.weight.current} lbs</p>
-              </div>
-              
-              <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                <div className="flex items-center gap-2 mb-1">
-                  <Activity className="w-4 h-4 text-green-400" />
-                  <span className="text-xs text-slate-400">Readiness</span>
-                </div>
-                <p className="text-lg font-bold text-green-400">{healthData.readiness.score}%</p>
-              </div>
-              
-              <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                <div className="flex items-center gap-2 mb-1">
-                  <Heart className="w-4 h-4 text-red-400" />
-                  <span className="text-xs text-slate-400">HRV</span>
-                </div>
-                <p className="text-lg font-bold">{healthData.hrv.value} ms</p>
-              </div>
-              
-              <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                <div className="flex items-center gap-2 mb-1">
-                  <Heart className="w-4 h-4 text-purple-400" />
-                  <span className="text-xs text-slate-400">Resting HR</span>
-                </div>
-                <p className="text-lg font-bold">{healthData.restingHR.value} bpm</p>
-              </div>
-              
-              <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                <div className="flex items-center gap-2 mb-1">
-                  <Moon className="w-4 h-4 text-indigo-400" />
-                  <span className="text-xs text-slate-400">Sleep</span>
-                </div>
-                <p className="text-lg font-bold">{healthData.sleep.hours} hrs</p>
-              </div>
-              
-              <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                <div className="flex items-center gap-2 mb-1">
-                  <Thermometer className="w-4 h-4 text-orange-400" />
-                  <span className="text-xs text-slate-400">Temp</span>
-                </div>
-                <p className="text-lg font-bold">{healthData.bodyTemp.value}°F</p>
-              </div>
-              
-              <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                <div className="flex items-center gap-2 mb-1">
-                  <Footprints className="w-4 h-4 text-cyan-400" />
-                  <span className="text-xs text-slate-400">Steps</span>
-                </div>
-                <p className="text-lg font-bold">{healthData.steps.today.toLocaleString()}</p>
-              </div>
-              
-              <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                <div className="flex items-center gap-2 mb-1">
-                  <Flame className="w-4 h-4 text-yellow-400" />
-                  <span className="text-xs text-slate-400">Active Cal</span>
-                </div>
-                <p className="text-lg font-bold">{healthData.activeCalories.today}</p>
-              </div>
-            </div>
-            
-            {recommendation && (
-              <div className={`mt-3 p-3 rounded-lg border ${
-                recommendation.type === 'optimal' ? 'bg-green-900/20 border-green-600/30' :
-                recommendation.type === 'good' ? 'bg-blue-900/20 border-blue-600/30' :
-                recommendation.type === 'moderate' ? 'bg-yellow-900/20 border-yellow-600/30' :
-                'bg-red-900/20 border-red-600/30'
-              }`}>
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5" />
-                  <p className={`text-sm font-medium ${recommendation.color}`}>
-                    {recommendation.message}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       <div className="bg-slate-800/30 border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-6">
@@ -593,11 +590,54 @@ const App = () => {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {activeTab === 'today' && (
           <div className="space-y-6">
+            {healthData && recommendation && recommendation.show && (
+              <div className={`p-4 rounded-lg border ${
+                recommendation.type === 'moderate' ? 'bg-yellow-900/20 border-yellow-600/30' :
+                'bg-red-900/20 border-red-600/30'
+              }`}>
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5" />
+                  <p className={`text-sm font-medium ${recommendation.color}`}>
+                    {recommendation.icon} {recommendation.message}
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="flex justify-between items-start flex-wrap gap-4">
               <div>
-                <h2 className="text-2xl font-bold">{currentDay.charAt(0).toUpperCase() + currentDay.slice(1)}'s Workout</h2>
-                <p className="text-slate-400 mt-1">{getDayLabel(currentDay)}</p>
-                {currentDay !== 'sunday' && (
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-bold">{getDayName(displayDay)}'s Workout</h2>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowDaySelector(!showDaySelector)}
+                      className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-3 py-2 rounded-lg"
+                    >
+                      <span className="text-sm">{selectedDay ? 'Viewing different day' : 'Today'}</span>
+                      <ChevronDown className="w-4 h-4" />
+                    </button>
+                    {showDaySelector && (
+                      <div className="absolute top-full mt-2 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-10 min-w-[200px]">
+                        {days.map(day => (
+                          <button
+                            key={day}
+                            onClick={() => {
+                              setSelectedDay(day === currentDay ? null : day);
+                              setShowDaySelector(false);
+                            }}
+                            className={`w-full text-left px-4 py-2 hover:bg-slate-700 first:rounded-t-lg last:rounded-b-lg ${
+                              day === currentDay ? 'text-blue-400' : ''
+                            } ${day === displayDay ? 'bg-slate-700' : ''}`}
+                          >
+                            {getDayName(day)} {day === currentDay && '(Today)'}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <p className="text-slate-400 mt-1">{getDayLabel(displayDay)}</p>
+                {displayDay !== 'sunday' && (
                   <div className="flex gap-4 mt-2 text-sm">
                     <span className="text-blue-400">• {totalSetsToday} exercises</span>
                     <span className="text-green-400">• {absExercises} ab exercises</span>
@@ -605,112 +645,148 @@ const App = () => {
                   </div>
                 )}
               </div>
-              <button 
-                onClick={() => setShowAIChat(true)} 
-                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-4 py-2 rounded-lg"
-              >
-                <MessageSquare className="w-5 h-5" />
-                AI Coach
-              </button>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setShowHistoryModal(true)}
+                  className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg"
+                >
+                  <History className="w-5 h-5" />
+                  History
+                </button>
+                <button 
+                  onClick={() => setShowAIChat(true)} 
+                  className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-4 py-2 rounded-lg"
+                >
+                  <MessageSquare className="w-5 h-5" />
+                  AI Coach
+                </button>
+              </div>
             </div>
 
-            {currentDay === 'sunday' ? (
+            {displayDay === 'sunday' ? (
               <div className="bg-slate-800/50 rounded-xl p-8 border border-slate-700 text-center">
                 <h3 className="text-xl font-semibold mb-4">Rest & Recovery Day</h3>
                 <p className="text-slate-400">Your muscles grow during rest. Take it easy today!</p>
                 <p className="text-sm text-slate-500 mt-2">Light walking, stretching, or foam rolling recommended</p>
               </div>
             ) : (
-              todayWorkout.map((workout, idx) => {
-                const exercise = getExerciseById(workout.exerciseId);
-                if (!exercise) return null;
-                const history = workoutHistory[workout.exerciseId] || [];
-                const lastSession = history[history.length - 1];
-                const isCardio = workout.isCardio || exercise.primary === 'Cardio';
+              <>
+                {todayWorkout.map((workout, idx) => {
+                  const exercise = getExerciseById(workout.exerciseId);
+                  if (!exercise) return null;
+                  const history = workoutHistory[workout.exerciseId] || [];
+                  const lastSession = history[history.length - 1];
+                  const isCardio = workout.isCardio || exercise.primary === 'Cardio';
 
-                return (
-                  <div key={idx} className={`bg-slate-800/50 rounded-xl p-6 border ${isCardio ? 'border-orange-600/30 bg-orange-900/10' : 'border-slate-700'}`}>
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className={`text-xl font-semibold ${isCardio ? 'text-orange-400' : 'text-blue-400'}`}>
-                            {exercise.name}
-                          </h3>
-                          {workout.note && (
-                            <span className="bg-red-600/20 text-red-400 px-2 py-1 rounded text-xs font-bold">
-                              {workout.note}
-                            </span>
-                          )}
-                          {isCardio && (
-                            <span className="bg-orange-600/20 text-orange-400 px-2 py-1 rounded text-xs font-bold">
-                              CARDIO
-                            </span>
+                  return (
+                    <div key={idx} className={`bg-slate-800/50 rounded-xl p-6 border ${isCardio ? 'border-orange-600/30 bg-orange-900/10' : 'border-slate-700'}`}>
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className={`text-xl font-semibold ${isCardio ? 'text-orange-400' : 'text-blue-400'}`}>
+                              {exercise.name}
+                            </h3>
+                            {workout.note && (
+                              <span className="bg-red-600/20 text-red-400 px-2 py-1 rounded text-xs font-bold">
+                                {workout.note}
+                              </span>
+                            )}
+                            {isCardio && (
+                              <span className="bg-orange-600/20 text-orange-400 px-2 py-1 rounded text-xs font-bold">
+                                CARDIO
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex gap-4 text-sm text-slate-400 mt-1">
+                            <span>{exercise.equipment}</span>
+                            <span>•</span>
+                            <span>{workout.targetSets} sets x {workout.targetReps}</span>
+                            {exercise.duration && <span>• {exercise.duration}</span>}
+                          </div>
+                          {lastSession && !isCardio && (
+                            <div className="text-sm text-green-400 mt-1">
+                              Last: {lastSession.weight}lbs x {lastSession.reps} reps
+                            </div>
                           )}
                         </div>
-                        <div className="flex gap-4 text-sm text-slate-400 mt-1">
-                          <span>{exercise.equipment}</span>
-                          <span>•</span>
-                          <span>{workout.targetSets} sets x {workout.targetReps}</span>
-                          {exercise.duration && <span>• {exercise.duration}</span>}
-                        </div>
-                        {lastSession && !isCardio && (
-                          <div className="text-sm text-green-400 mt-1">
-                            Last: {lastSession.weight}lbs x {lastSession.reps} reps
+                        {!isCardio && (
+                          <div className="flex gap-2">
+                            <button 
+                              onClick={() => { setSwapExerciseId(workout.exerciseId); setShowSwapModal(true); }} 
+                              className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg"
+                            >
+                              <RefreshCw className="w-5 h-5" />
+                            </button>
+                            <button 
+                              onClick={() => { setSelectedExercise(workout.exerciseId); setShowAIChat(true); }} 
+                              className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+                            >
+                              <Zap className="w-5 h-5" />
+                            </button>
                           </div>
                         )}
                       </div>
-                      {!isCardio && (
-                        <div className="flex gap-2">
-                          <button 
-                            onClick={() => { setSwapExerciseId(workout.exerciseId); setShowSwapModal(true); }} 
-                            className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg"
-                          >
-                            <RefreshCw className="w-5 h-5" />
-                          </button>
-                          <button 
-                            onClick={() => { setSelectedExercise(workout.exerciseId); setShowAIChat(true); }} 
-                            className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
-                          >
-                            <Zap className="w-5 h-5" />
-                          </button>
+                      {!isCardio ? (
+                        <div className="space-y-2">
+                          {[...Array(workout.targetSets)].map((_, setIdx) => {
+                            const setNumber = setIdx + 1;
+                            const loggedData = todayLoggedSets[`${workout.exerciseId}_${setNumber}`];
+                            return (
+                              <SetLogger 
+                                key={setIdx} 
+                                setNumber={setNumber} 
+                                onLog={(data) => logSet(workout.exerciseId, setNumber, data)} 
+                                onEdit={(data) => editSet(workout.exerciseId, setNumber, data)}
+                                loggedData={loggedData}
+                              />
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="bg-slate-700/30 rounded-lg p-4 text-center">
+                          <p className="text-slate-300 font-medium">{exercise.duration || workout.targetReps}</p>
+                          <p className="text-sm text-slate-400 mt-1">Complete after strength training</p>
                         </div>
                       )}
                     </div>
-                    {!isCardio ? (
-                      <div className="space-y-2">
-                        {[...Array(workout.targetSets)].map((_, setIdx) => {
-                          const setNumber = setIdx + 1;
-                          const loggedData = todayLoggedSets[`${workout.exerciseId}_${setNumber}`];
-                          return (
-                            <SetLogger 
-                              key={setIdx} 
-                              setNumber={setNumber} 
-                              onLog={(data) => logSet(workout.exerciseId, setNumber, data)} 
-                              previousWeight={lastSession?.weight}
-                              previousReps={lastSession?.reps}
-                              loggedData={loggedData}
-                            />
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="bg-slate-700/30 rounded-lg p-4 text-center">
-                        <p className="text-slate-300 font-medium">{exercise.duration || workout.targetReps}</p>
-                        <p className="text-sm text-slate-400 mt-1">Complete after strength training</p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })
+                  );
+                })}
+
+                <div className="bg-slate-800/50 rounded-xl p-6 border border-green-600/30">
+                  <button
+                    onClick={completeWorkout}
+                    className="w-full bg-green-600 hover:bg-green-700 py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-2"
+                  >
+                    <Check className="w-6 h-6" />
+                    Complete Workout
+                  </button>
+                  <p className="text-sm text-slate-400 text-center mt-3">
+                    Click to mark this workout as complete (even if you didn't finish all exercises)
+                  </p>
+                </div>
+              </>
             )}
           </div>
         )}
 
         {activeTab === 'health' && (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold">Health Dashboard</h2>
-              <p className="text-slate-400 mt-2">Apple Health + Oura Ring Integration</p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold">Health Dashboard</h2>
+                <p className="text-slate-400 mt-2">Apple Health + Oura Ring Integration</p>
+                {lastHealthUpdate && (
+                  <p className="text-xs text-slate-500 mt-1">Last updated: {getTimeSinceUpdate()}</p>
+                )}
+              </div>
+              <button
+                onClick={fetchHealthData}
+                disabled={refreshingHealth}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-4 py-2 rounded-lg"
+              >
+                <RefreshCw className={`w-5 h-5 ${refreshingHealth ? 'animate-spin' : ''}`} />
+                Refresh
+              </button>
             </div>
 
             {!healthData ? (
@@ -871,9 +947,15 @@ const App = () => {
                         <p className="text-slate-400">Rest and recovery day</p>
                       </div>
                     ) : (
-                      <div className="text-sm text-slate-500">
-                        Click "Today" tab to see full workout details
-                      </div>
+                      <button
+                        onClick={() => {
+                          setSelectedDay(dayLower === currentDay ? null : dayLower);
+                          setActiveTab('today');
+                        }}
+                        className="text-sm text-blue-400 hover:text-blue-300 mt-2"
+                      >
+                        View full workout →
+                      </button>
                     )}
                   </div>
                 );
@@ -995,6 +1077,41 @@ const App = () => {
           </div>
         )}
       </div>
+
+      {showHistoryModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 rounded-xl max-w-4xl w-full max-h-[80vh] overflow-hidden border border-slate-700">
+            <div className="p-6 border-b border-slate-700 flex justify-between items-center">
+              <h3 className="text-xl font-bold">Workout History</h3>
+              <button onClick={() => setShowHistoryModal(false)} className="p-2 hover:bg-slate-700 rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <p className="text-sm text-slate-400 mb-4">All your logged sets and workouts</p>
+              <div className="space-y-3">
+                {getAllHistoricalData().slice(0, 50).map((entry, idx) => (
+                  <div key={idx} className="bg-slate-700/30 rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-semibold">{entry.exerciseName}</p>
+                        <p className="text-sm text-slate-400">{entry.primary}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium">{entry.weight} lbs × {entry.reps} reps</p>
+                        <p className="text-xs text-slate-500">{new Date(entry.timestamp || entry.date).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {getAllHistoricalData().length === 0 && (
+                  <p className="text-slate-400 text-center py-8">No history yet. Start logging workouts!</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showSwapModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
